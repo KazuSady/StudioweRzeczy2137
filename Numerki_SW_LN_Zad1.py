@@ -1,8 +1,8 @@
 import math
 
 def wielomian(x):
-    # f(x) = (x^3) - x + 1 
-    return x**2 - 2*x + 1
+    # f(x) = 2x3 - 6x2 + 2x - 1
+    return x*(x*(x-3) + 2)-6
 
 def wykladnicza(x):
     # f(x) = ( (1/3)^x - 3)
@@ -10,34 +10,38 @@ def wykladnicza(x):
 
 def trygonometryczna(x):
     # f(x) = sin(x)
-    return math.cos(x)
+    return float(math.sin(x))
 
 def bisekcja(fun, low, high, eps = None, iter = None):
     fLow = fun(low) * 1.0
     fHigh = fun(high) * 1.0
     repetition = 0
 
+    if (fun(low) == 0): 
+        return low
+    elif (fun(high) == 0): 
+        return high
+    
     if (fLow * fHigh > 0):
         return "Error"
     else:
+        while(eps != None and abs(low-high) > eps):
 
-        while(1):
+            if (iter != None and repetition == iter):
+                break
+
             repetition += 1
-            mid = (low + high) / 2
-            
-            if ((eps != None) and (abs(low - mid) < eps)):
-                break
-            if ((iter != None) and (repetition >= iter)):
-                break
+            mid = (low + high) / 2.0
 
-            fMid = fun(mid) * 1.0
-            if ( (eps != None) and (abs(fMid < eps))):
+            if (fun(mid) == 0):
                 break
-
-            if (fLow * fMid < 0):
+            if (fun(low) * fun(mid) < 0):
                 high = mid
             else:
                 low = mid
-                fLow = fMid
+
         return "Pierwiastek: " + str(mid) + "\n" + "Wartosc funkcji: " + str(fun(mid))
     
+print(bisekcja(wielomian, -10.0, 10.0, 1e-14, None) + "\n")
+print(bisekcja(wykladnicza, -10.0, 10.0, 1e-14, None) + "\n") 
+print(bisekcja(trygonometryczna, 1.0, 10.0, 1e-14, None) + "\n") 
