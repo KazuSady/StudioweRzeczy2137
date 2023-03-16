@@ -1,8 +1,32 @@
 import math
+import numpy as np
+import matplotlib.pyplot as plt
 
 def wielomian(x):
     # f(x) = 2x^3 - 6x^2 + 2x - 1
     return 2*pow(x,3)-6*x*x+2*x-1
+
+def rysuj_funkcje(fun, low, high, root_x):
+    x = np.linspace(low, high, 100)
+    y = fun(x)
+    plt.plot(x, y)
+    plt.grid()
+
+    root_y = fun(root_x)
+
+    ax = plt.gca()
+    ax.spines['top'].set_color('none')
+    ax.spines['bottom'].set_position('zero')
+    ax.spines['left'].set_position('zero')
+    ax.spines['right'].set_color('none')
+    ax.set_xlabel('x', size=14, labelpad=-24, x=1.03)
+    ax.set_ylabel('y', size=14, labelpad=-21, y=1.02, rotation=0)
+
+    plt.axvline(x=root_x, color='r', linestyle='--')
+    plt.text(root_x, root_y, f'({root_x:.4f}, {root_y:.4f})', horizontalalignment='right' if root_x < (low + high) / 2 else 'left')
+
+    plt.show()
+    
 
 def wykladnicza(x):
     # f(x) = ( (1/3)^x - 3)
@@ -10,11 +34,11 @@ def wykladnicza(x):
 
 def trygonometryczna(x):
     # f(x) = sin(x)
-    return float(math.sin(x))
+    return np.vectorize(math.sin)(x)
 
 def zlozenie(x):
     # f(x) = 2x - 4 + arctan(x)
-    return 2*x - 4 + (math.atan(x))
+    return 2*x - 4 + np.vectorize(math.atan)(x)
 
 #Pochodne
 def Dwielomian(x):
@@ -48,7 +72,7 @@ def bisekcja(fun, low, high, eps, iter):
     
     # Sprawdza, czy początek i koniec przedziału posiada różne znaki
     if (fLow * fHigh > 0):
-        return "Wykryto ten sam znak"
+        return "Wykryto ten sam znak wartości funkcji na granicach przedziału"
     else:
         # Wykonuje, dopóki wartość absolutna różnicy nie jest mniejsza od zadanego epsilona
         while(eps != None and abs(low-high) > eps or iter != None):
@@ -65,10 +89,7 @@ def bisekcja(fun, low, high, eps, iter):
                 high = mid
             else:
                 low = mid
-
         return "Pierwiastek: " + str(mid) + "\nLiczba iteracji: " + str(repetition)
-
-# GIGA WAŻNE METODA STYCZNYCH DLA TRYGONOMETRYCZNEJ NIE DZIAŁA DK WHY
 
 def styczna(fun, Dfun, low, high, eps, iter):
     repetition = 0
@@ -78,7 +99,8 @@ def styczna(fun, Dfun, low, high, eps, iter):
         x = tmp 
         tmp = x - fun(x)/Dfun(x)
         repetition += 1
-    return "Pierwiastek: " + str(tmp) + "\nLiczba iteracji: " + str(repetition)
+    return "Pierwiastek: " + str(tmp) + "\nLiczba iteracji: " + str(repetition),tmp
+
 
 
 print("Wybierz funkcję, której rozwiązanie chcesz znaleźć:\n1 - wielomian\n2 - wykładnicza\n3 - trygonometryczna\n4 - złożona")
@@ -102,15 +124,19 @@ else:
 match fun:
     case '1':
         print(bisekcja(wielomian, low, high, eps, iter))
-        print(styczna(wielomian, Dwielomian, low, high, eps, iter))
+        print(styczna(wielomian, Dwielomian, low, high, eps, iter)[0])
+        rysuj_funkcje(wielomian,low,high,styczna(wielomian, Dwielomian, low, high, eps, iter)[1])
     case '2':
-         print(bisekcja(wykladnicza, low, high, eps, iter))
-         print(styczna(wykladnicza, Dwykladnicza, low, high, eps, iter))
+        print(bisekcja(wykladnicza, low, high, eps, iter))
+        print(styczna(wykladnicza, Dwykladnicza, low, high, eps, iter)[0])
+        rysuj_funkcje(wykladnicza,low,high,styczna(wykladnicza, Dwykladnicza, low, high, eps, iter)[1])
     case '3':
         print(bisekcja(trygonometryczna, low, high, eps, iter))
-        print(styczna(trygonometryczna, Dtrygonometryczna, low, high, eps, iter))
+        print(styczna(trygonometryczna, Dtrygonometryczna, low, high, eps, iter)[0])
+        rysuj_funkcje(trygonometryczna,low,high,styczna(trygonometryczna, Dtrygonometryczna, low, high, eps, iter)[1])
     case '4':
-         print(bisekcja(zlozenie, low, high, eps, iter))
-         print(styczna(zlozenie, Dzlozenie, low, high, eps, iter))
+        print(bisekcja(zlozenie, low, high, eps, iter))
+        print(styczna(zlozenie, Dzlozenie, low, high, eps, iter)[0])
+        rysuj_funkcje(zlozenie,low,high,styczna(zlozenie, Dzlozenie, low, high, eps, iter)[1])
 
 
