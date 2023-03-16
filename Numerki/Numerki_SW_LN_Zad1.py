@@ -12,7 +12,7 @@ def rysuj_funkcje(fun, low, high, root_x):
     plt.plot(x, y)
     plt.grid()
 
-    root_y = fun(root_x)
+    root_y = fun(int(root_x))
 
     ax = plt.gca()
     ax.spines['top'].set_color('none')
@@ -89,7 +89,7 @@ def bisekcja(fun, low, high, eps, iter):
                 high = mid
             else:
                 low = mid
-        return "Pierwiastek: " + str(mid) + "\nLiczba iteracji: " + str(repetition)
+        return "Pierwiastek: " + str(mid) + "\nLiczba iteracji: " + str(repetition),mid
 
 def styczna(fun, Dfun, low, high, eps, iter):
     repetition = 0
@@ -123,20 +123,25 @@ else:
     print("Nie wybrano odpowiedniego kryterium")
 match fun:
     case '1':
-        print(bisekcja(wielomian, low, high, eps, iter))
+        print(bisekcja(wielomian, low, high, eps, iter)[0])
         print(styczna(wielomian, Dwielomian, low, high, eps, iter)[0])
+        rysuj_funkcje(wielomian,low,high,bisekcja(wielomian, low, high, eps, iter)[1])
         rysuj_funkcje(wielomian,low,high,styczna(wielomian, Dwielomian, low, high, eps, iter)[1])
     case '2':
-        print(bisekcja(wykladnicza, low, high, eps, iter))
+        print(bisekcja(wykladnicza, low, high, eps, iter)[0])
         print(styczna(wykladnicza, Dwykladnicza, low, high, eps, iter)[0])
+        rysuj_funkcje(wykladnicza,low,high,bisekcja(wykladnicza, low, high, eps, iter)[1])
         rysuj_funkcje(wykladnicza,low,high,styczna(wykladnicza, Dwykladnicza, low, high, eps, iter)[1])
     case '3':
-        print(bisekcja(trygonometryczna, low, high, eps, iter))
+        print(bisekcja(trygonometryczna, low, high, eps, iter)[0])
         print(styczna(trygonometryczna, Dtrygonometryczna, low, high, eps, iter)[0])
+        rysuj_funkcje(trygonometryczna,low,high,bisekcja(trygonometryczna, low, high, eps, iter)[1])
         rysuj_funkcje(trygonometryczna,low,high,styczna(trygonometryczna, Dtrygonometryczna, low, high, eps, iter)[1])
     case '4':
-        print(bisekcja(zlozenie, low, high, eps, iter))
+        print(bisekcja(zlozenie, low, high, eps, iter)[0])
         print(styczna(zlozenie, Dzlozenie, low, high, eps, iter)[0])
+        rysuj_funkcje(zlozenie
+                      ,low,high,bisekcja(zlozenie, low, high, eps, iter)[1])
         rysuj_funkcje(zlozenie,low,high,styczna(zlozenie, Dzlozenie, low, high, eps, iter)[1])
 
 
