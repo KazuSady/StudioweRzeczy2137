@@ -14,6 +14,7 @@ def rysuj_funkcje(fun, low, high, root_x1, root_x2):
 
     root_y = fun(root_x1)
 
+
     ax = plt.gca()
     ax.spines['top'].set_color('none')
     ax.spines['bottom'].set_position('zero')
