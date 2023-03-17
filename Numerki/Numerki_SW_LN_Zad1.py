@@ -28,6 +28,9 @@ def rysuj_funkcje(fun, low, high, root_x1, root_x2):
         plt.axvline(x=root_x2, color='g', linestyle=':')
         plt.text(root_x2, root_y, f'({root_x2:.4f}, {root_y:.4f})', horizontalalignment='right' if root_x2 < (low + high) / 2 else 'left')
 
+    plt.plot(root_x1, root_y, marker = "o", markersize = 10, markerfacecolor = "red")
+    plt.plot(root_x2, root_y, marker = "o", markersize = 10, markerfacecolor = "green")
+
     plt.show()
     
 
