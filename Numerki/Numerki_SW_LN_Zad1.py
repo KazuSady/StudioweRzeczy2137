@@ -11,23 +11,22 @@ def rysuj_funkcje(fun, low, high, root_x1, root_x2):
     y = fun(x)
     plt.plot(x, y)
     plt.grid()
-
     root_y = fun(root_x1)
 
-
-    ax = plt.gca()
-    ax.spines['top'].set_color('none')
-    ax.spines['bottom'].set_position('zero')
-    ax.spines['left'].set_position('zero')
-    ax.spines['right'].set_color('none')
-    ax.set_xlabel('x', size=14, labelpad=-24, x=1.03)
-    ax.set_ylabel('y', size=14, labelpad=-21, y=1.02, rotation=0)
+    # ax = plt.gca()
+    # ax.spines['top'].set_color('none')
+    # ax.spines['bottom'].set_position('zero')
+    # ax.spines['left'].set_position('zero')
+    # ax.spines['right'].set_color('none')
+    # ax.set_xlabel('x', size=14, labelpad=-24, x=1.03)
+    # ax.set_ylabel('y', size=14, labelpad=-21, y=1.02, rotation=0)
 
     plt.axvline(x=root_x1, color='r', linestyle='--')
     plt.text(root_x1, root_y, f'({root_x1:.4f}, {root_y:.4f})', horizontalalignment='right' if root_x1 < (low + high) / 2 else 'left')
 
-    plt.axvline(x=root_x2, color='g', linestyle=':')
-    plt.text(root_x2, root_y, f'({root_x2:.4f}, {root_y:.4f})', horizontalalignment='right' if root_x2 < (low + high) / 2 else 'left')
+    if (root_x2 != None):
+        plt.axvline(x=root_x2, color='g', linestyle=':')
+        plt.text(root_x2, root_y, f'({root_x2:.4f}, {root_y:.4f})', horizontalalignment='right' if root_x2 < (low + high) / 2 else 'left')
 
     plt.show()
     
@@ -76,7 +75,7 @@ def bisekcja(fun, low, high, eps, iter):
     
     # Sprawdza, czy początek i koniec przedziału posiada różne znaki
     if (fLow * fHigh > 0):
-        return "Wykryto ten sam znak wartości funkcji na granicach przedziału"
+        return "Wykryto ten sam znak wartości funkcji na granicach przedziału", None
     else:
         # Wykonuje, dopóki wartość absolutna różnicy nie jest mniejsza od zadanego epsilona
         while(eps != None and abs(low-high) > eps or iter != None):
