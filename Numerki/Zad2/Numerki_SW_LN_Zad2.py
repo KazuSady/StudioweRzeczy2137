@@ -1,7 +1,38 @@
 import numpy as np
 
+def is_diagonally_dominant(matrix):
+    n = len(matrix)
+    # Loop over rows and check if each row is diagonally dominant
+    for i in range(n):
+        row_sum = sum(abs(matrix[i][j]) for j in range(n) if j != i)
+        if abs(matrix[i][i]) <= row_sum:
+            return False
+    return True
+
+def make_diagonally_dominant(matrix):
+    
+    n = len(matrix)
+    
+    # Loop over rows and rearrange elements to make diagonal dominant
+    for i in range(n):
+        max_val = abs(matrix[i][i])
+        max_idx = i
+        
+        # Find index of maximum absolute value in row
+        for j in range(n):
+            if j != i and abs(matrix[i][j]) > max_val:
+                max_val = abs(matrix[i][j])
+                max_idx = j
+        
+        # Swap elements to make maximum value on diagonal
+        if max_idx != i:
+            matrix[i][i], matrix[i][max_idx] = matrix[i][max_idx], matrix[i][i]
+    return matrix
+
 def GaussSeidel(A, b, X, iter, eps):
-    n = len(b)      
+    n = len(b)     
+    if is_diagonally_dominant(A)!=True: 
+        A=make_diagonally_dominant(A)
     for rep in range(iter):
         x_new = np.zeros(n)
         for j in range(n):
@@ -9,9 +40,9 @@ def GaussSeidel(A, b, X, iter, eps):
             s2 = np.dot(A[j, j + 1:], X[j + 1:])
             x_new[j] = (b[j] - s1 - s2) / A[j, j]
         if eps!=None and np.allclose(X, x_new, rtol=eps):
-            return x_new
+            return x_new,rep
         X = x_new
-    return X
+    return X,rep
 
 print('Wprowadz nazwe pliku z ukladem rownan do rozwiazania')
 fileName = input()
@@ -41,9 +72,12 @@ b=np.array(b)
 
 match stopMethod:
     case '1':
-        print(np.round(GaussSeidel(A, b, x0, int(iters), None),2))
+        x=GaussSeidel(A, b, x0, iters, None)
+        print(str(np.round(x[0],2))+' rep:'+str(x[1]))
     case '2':
-        print(np.round(GaussSeidel(A, b, x0,100, float(epsilon)),2))
+        x=GaussSeidel(A, b, x0, 1000, epsilon)
+        print(str(np.round(x[0],2))+' rep:'+str(x[1]))
+       
 
 
 
