@@ -1,25 +1,17 @@
-def GaussSeidel(aMatrix, bMatrix,xSolution, iter, eps):
-    n = len(aMatrix)
-    repetition = 0                  
-    while True:
-        for i in range(0, n):  
-            temp = 0       
-            d = bMatrix[i] 
-            print(d)                 
-            for j in range(0, n):     
-                if(i != j):
-                    d-=aMatrix[i][j] * xSolution[j]
-                    print(d)
-            xSolution[i] = d / aMatrix[i][j]  
-            # if eps != None and abs(xSolution[i]-temp) < eps:
-            #     return x, repetition
-            # temp = xSolution[i]
-            repetition += 1 
-            if iter != None and repetition == iter:
-                break    
-        return x, repetition
-        
+import numpy as np
 
+def GaussSeidel(A, b, X, iter, eps):
+    n = len(b)      
+    for rep in range(iter):
+        x_new = np.zeros(n)
+        for j in range(n):
+            s1 = np.dot(A[j, :j], x_new[:j])
+            s2 = np.dot(A[j, j + 1:], X[j + 1:])
+            x_new[j] = (b[j] - s1 - s2) / A[j, j]
+        if eps!=None and np.allclose(X, x_new, rtol=eps):
+            return x_new
+        X = x_new
+    return X
 
 print('Wprowadz nazwe pliku z ukladem rownan do rozwiazania')
 fileName = input()
@@ -28,29 +20,32 @@ stopMethod = input()
 match stopMethod:
     case '1':
         print('Wprowadz liczbe iteracji')
-        iters = input()
+        iters = int(input())
     case '2':
         print('Wprowadz dokladnosc, np. 1e-8')
-        epsilon = input()
+        epsilon = float(input())
 
-with open(fileName, 'r') as f:
-    lines = f.readlines()
-    data = []
-    n = -1
-    last_column = []
-    for line in lines:
-        chars = [float(x) for x in line.split()]
-        data.append(chars[:-1])
-        last_column.append(chars[-1])
-        n += 1
-# Creating the solutions array 
-x = []
-for i in range(0, n + 1):
-    x.append(0)
+ # Read input file
+A = []
+b = []
+with open(fileName, "r") as f:
+    for line in f:
+        row = [float(x) for x in line.split()]
+        A.append(row[:-1])
+        b.append(row[-1])
+
+x0 = np.zeros(len(b))
+A=np.array(A)
+b=np.array(b)
+
 
 match stopMethod:
     case '1':
-        print(GaussSeidel(data, last_column, x, int(iters), None))
+        print(np.round(GaussSeidel(A, b, x0, int(iters), None),2))
     case '2':
-        print(GaussSeidel(data, last_column, x, None, float(epsilon)))
-        
+        print(np.round(GaussSeidel(A, b, x0,100, float(epsilon)),2))
+
+
+
+
+
