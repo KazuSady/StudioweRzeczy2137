@@ -9,40 +9,31 @@ def is_diagonally_dominant(matrix):
             return False
     return True
 
-def make_diagonally_dominant(matrix):
-    
-    n = len(matrix)
-    
-    # Loop over rows and rearrange elements to make diagonal dominant
-    for i in range(n):
-        max_val = abs(matrix[i][i])
-        max_idx = i
-        
-        # Find index of maximum absolute value in row
-        for j in range(n):
-            if j != i and abs(matrix[i][j]) > max_val:
-                max_val = abs(matrix[i][j])
-                max_idx = j
-        
-        # Swap elements to make maximum value on diagonal
-        if max_idx != i:
-            matrix[i][i], matrix[i][max_idx] = matrix[i][max_idx], matrix[i][i]
-    return matrix
 
 def GaussSeidel(A, b, X, iter, eps):
-    n = len(b)     
-    if is_diagonally_dominant(A)!=True: 
-        A=make_diagonally_dominant(A)
+    n = len(b)    
+    x_new = np.zeros(n) 
+    D=np.zeros_like(A)
+    U=np.zeros_like(A)
+    L=np.zeros_like(A)
+    for i in range(n):
+        D[i][i]=A[i][i]
+    for i in range(n):
+        for j in range(i+1,n):
+            U[i][j]=A[i][j]
+    for i in range(1,n):
+        for j in range(i):
+            L[i][j]=A[i][j]
+    D=np.linalg.inv(D)
+    b=np.dot(D,b)
+    U=np.dot(D,U)
+    L=np.dot(D,L)
     for rep in range(iter):
-        x_new = np.zeros(n)
-        for j in range(n):
-            s1 = np.dot(A[j, :j], x_new[:j])
-            s2 = np.dot(A[j, j + 1:], X[j + 1:])
-            x_new[j] = (b[j] - s1 - s2) / A[j, j]
+        x_new=b-np.dot(L,x_new)-np.dot(U,X)
         if eps!=None and np.allclose(X, x_new, rtol=eps):
-            return x_new,rep
+            return x_new,rep+1
         X = x_new
-    return X,rep
+    return X, rep+1
 
 print('Wprowadz nazwe pliku z ukladem rownan do rozwiazania')
 fileName = input()
@@ -72,11 +63,17 @@ b=np.array(b)
 
 match stopMethod:
     case '1':
-        x=GaussSeidel(A, b, x0, iters, None)
-        print(str(np.round(x[0],2))+' rep:'+str(x[1]))
+        if is_diagonally_dominant(A)!=True: 
+            print("Macierz nie jest zbieżna")
+        else:
+            x=GaussSeidel(A, b, x0, iters, None)
+            print(str(np.round(x[0],4))+' rep:'+str(x[1]))
     case '2':
-        x=GaussSeidel(A, b, x0, 1000, epsilon)
-        print(str(np.round(x[0],2))+' rep:'+str(x[1]))
+        if is_diagonally_dominant(A)!=True: 
+            print("Macierz nie jest zbieżna")
+        else:
+            x=GaussSeidel(A, b, x0, 1000, epsilon)
+            print(str(np.round(x[0],4))+' rep:'+str(x[1]))
        
 
 
