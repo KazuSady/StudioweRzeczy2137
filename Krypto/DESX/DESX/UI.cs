@@ -26,7 +26,9 @@ namespace DESX
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Generated.Checked = true;
+            Key1.Text = "1";
+            Key2.Text = "2";
+            Key3.Text = "3";
         }
 
         private void SetText(string text, TextBox TextPlace)
@@ -68,16 +70,37 @@ namespace DESX
             }
         }
 
+        private void ReadKey_Click(object sender, EventArgs e)
+        {
+            if (WczytajKlucz.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    var sr = new StreamReader(WczytajKlucz.FileName);
+                    SetText(sr.ReadLine(), Key1);
+                    SetText(sr.ReadLine(), Key2);
+                    SetText(sr.ReadLine(), Key3);
+                }
+                catch (SecurityException ex)
+                {
+                    MessageBox.Show($"Security error.\n\nError message: {ex.Message}\n\n" +
+                    $"Details:\n\n{ex.StackTrace}");
+                }
+            }
+        }
+
         private void SaveToCode_Click(object sender, EventArgs e)
         {
-            ZapiszDoKodowania.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             if (ZapiszDoKodowania.ShowDialog() ==DialogResult.OK)
             {
                 try
                 {
-                    using (StreamWriter filewrite = new StreamWriter(ZapiszDoKodowania.FileName))
+                    using (FileStream filewrite = new FileStream(ZapiszDoKodowania.FileName, FileMode.CreateNew))
                     {
-                        filewrite.WriteLine(TextToCode.Text);
+                        using (BinaryWriter bw = new BinaryWriter(filewrite))
+                        {
+                            bw.Write(TextToCode.Text);
+                        }
                     }
                 }
                 catch (SecurityException ex)
@@ -91,14 +114,40 @@ namespace DESX
 
         private void SaveToDecode_Click(object sender, EventArgs e)
         {
-            ZapiszDoDekodowania.Filter = "txt files (*.txt)|*.txt|All files (*.*)|*.*";
             if (ZapiszDoDekodowania.ShowDialog() == DialogResult.OK)
             {
                 try
                 {
-                    using (StreamWriter filewrite = new StreamWriter(ZapiszDoDekodowania.FileName))
+                    using (FileStream filewrite = new FileStream(ZapiszDoDekodowania.FileName, FileMode.CreateNew))
                     {
-                        filewrite.WriteLine(TextToDecode.Text);
+                        using (BinaryWriter bw = new BinaryWriter(filewrite))
+                        {
+                            bw.Write(TextToDecode.Text);
+                        }
+                    }
+                }
+                catch (SecurityException ex)
+                {
+                    MessageBox.Show($"Security error.\n\nError message: {ex.Message}\n\n" +
+                    $"Details:\n\n{ex.StackTrace}");
+                }
+            }
+        }
+
+        private void WriteKey_Click(object sender, EventArgs e)
+        {
+            if (ZapiszKlucz.ShowDialog() == DialogResult.OK)
+            {
+                try
+                {
+                    using (FileStream filewrite = new FileStream(ZapiszKlucz.FileName, FileMode.CreateNew))
+                    {
+                        using (BinaryWriter bw = new BinaryWriter(filewrite))
+                        {
+                            bw.Write(Key1.Text);
+                            bw.Write(Key2.Text);
+                            bw.Write(Key3.Text);
+                        }
                     }
                 }
                 catch (SecurityException ex)
