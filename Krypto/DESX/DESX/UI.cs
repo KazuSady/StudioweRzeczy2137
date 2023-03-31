@@ -1,4 +1,6 @@
-﻿using System;
+﻿
+using PdfSharp.Pdf.IO;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -9,6 +11,8 @@ using System.Security;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
 
 namespace DESX
 {
@@ -42,8 +46,9 @@ namespace DESX
             {
                 try
                 {
-                    var sr = new StreamReader(WczytajDoKodowania.FileName);
-                    SetText(sr.ReadToEnd(), TextToCode);
+                    byte[] bytes = File.ReadAllBytes(WczytajDoKodowania.FileName);
+                    string text = Encoding.UTF8.GetString(bytes);
+                    SetText(text, TextToCode);
                 }
                 catch (SecurityException ex)
                 {
@@ -59,8 +64,9 @@ namespace DESX
             {
                 try
                 {
-                    var sr = new StreamReader(WczytajDoDekodowania.FileName);
-                    SetText(sr.ReadToEnd(), TextToDecode);
+                    byte[] bytes = File.ReadAllBytes(WczytajDoDekodowania.FileName);
+                    string text = Encoding.UTF8.GetString(bytes);
+                    SetText(text, TextToDecode);
                 }
                 catch (SecurityException ex)
                 {
@@ -97,9 +103,10 @@ namespace DESX
                 {
                     using (FileStream filewrite = new FileStream(ZapiszDoKodowania.FileName, FileMode.CreateNew))
                     {
+                        byte[] textBytes = Encoding.UTF8.GetBytes(TextToCode.Text);
                         using (BinaryWriter bw = new BinaryWriter(filewrite))
                         {
-                            bw.Write(TextToCode.Text);
+                            bw.Write(textBytes);
                         }
                     }
                 }
@@ -120,9 +127,10 @@ namespace DESX
                 {
                     using (FileStream filewrite = new FileStream(ZapiszDoDekodowania.FileName, FileMode.CreateNew))
                     {
+                        byte[] textBytes = Encoding.UTF8.GetBytes(TextToDecode.Text);
                         using (BinaryWriter bw = new BinaryWriter(filewrite))
                         {
-                            bw.Write(TextToDecode.Text);
+                            bw.Write(textBytes);
                         }
                     }
                 }
