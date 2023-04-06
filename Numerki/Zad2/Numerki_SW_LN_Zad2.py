@@ -67,13 +67,13 @@ match stopMethod:
             print("Macierz nie jest zbieżna")
         else:
             x=GaussSeidel(A, b, x0, iters, None)
-            print(str(np.round(x[0],4))+' rep:'+str(x[1]))
+            print(str(np.round(x[0],4))+' rep: '+str(x[1]))
     case '2':
         if is_diagonally_dominant(A)!=True: 
             print("Macierz nie jest zbieżna")
         else:
             x=GaussSeidel(A, b, x0, 1000, epsilon)
-            print(str(np.round(x[0],4))+' rep:'+str(x[1]))
+            print(str(np.round(x[0],4))+' rep: '+str(x[1]))
        
 
 

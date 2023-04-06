@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Data.SqlClient;
+using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DESX
 {
     internal class DES
     {
+        private Permutation permutation = new Permutation();
         private byte[][] SBox = {
             new byte[]{
                     14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  7,
@@ -50,5 +49,207 @@ namespace DESX
                      7, 11,  4,  1,  9, 12, 14,  2,  0,  6, 10, 13, 15,  3,  5,  8,
                      2,  1, 14,  7,  4, 10,  8, 13, 15, 12,  9,  0,  3,  5,  6, 11}
     };
+        private byte[] finalPerm = {
+            40,  8, 48, 16, 56, 24, 64, 32,
+            39,  7, 47, 15, 55, 23, 63, 31,
+            38,  6, 46, 14, 54, 22, 62, 30,
+            37,  5, 45, 13, 53, 21, 61, 29,
+            36,  4, 44, 12, 52, 20, 60, 28,
+            35,  3, 43, 11, 51, 19, 59, 27,
+            34,  2, 42, 10, 50, 18, 58, 26,
+            33,  1, 41,  9, 49, 17, 57, 25
+        };
+        private byte[] splitHalfPerm = {
+            16,  7, 20, 21, 29, 12, 28, 17,
+             1, 15, 23, 26,  5, 18, 31, 10,
+             2,  8, 24, 14, 32, 27,  3,  9,
+            19, 13, 30,  6, 22, 11,  4, 25
+        };
+        private byte[] expansionPerm = {
+            32,  1,  2,  3,  4,  5,
+            4,  5,  6,  7,  8,  9,
+            8,  9, 10, 11, 12, 13,
+            12, 13, 14, 15, 16, 17,
+            16, 17, 18, 19, 20, 21,
+            20, 21, 22, 23, 24, 25,
+            24, 25, 26, 27, 28, 29,
+            28, 29, 30, 31, 32,  1
+        };
+
+        private byte[] encryptedMessage = new byte[64];
+        private byte[] decryptedMessage = new byte[64];
+        private byte[] extentionPermutationBlock = new byte[48];
+        private byte[] leftMessageBlock = new byte[32];
+        private byte[] rightMessageBlock = new byte[32];
+        private byte[] tempRightForLeft = new byte[32];
+        private byte[] keyForXOR = new byte[48];
+        private byte[] afterSBox = new byte[32];
+        private byte[] afterSplitPerm = new byte[32];
+
+        private byte[] _XOR1 = new byte[48];
+        private byte[] _XOR2 = new byte[48];
+
+        private KeyBlock keyBlock;
+        private MessageBlock messageBlock;
+
+        public byte[] enrypt(char[] message, char[] key)
+        {
+            messageBlock = new MessageBlock(message);
+            keyBlock = new KeyBlock(key);
+            leftMessageBlock = messageBlock.getLeftBlock();
+            rightMessageBlock = messageBlock.getRightBlock();
+
+            for (int i = 0; i < 16; i++)
+            {
+                tempRightForLeft = rightMessageBlock;
+
+                extentionPermutation();
+                keyBlock.keyBlockRoundEncrypt(i);
+                keyForXOR = keyBlock.getPC2();
+
+                for (int j = 0; j < 48; j++)
+                {
+                    _XOR1[j] = (byte)(extentionPermutationBlock[j] ^ keyForXOR[j]);
+                }
+
+                byte[] number4Byte = new byte[4];
+
+                for (int j = 0; j < 8; j++)
+                {
+                    byte[] tmp = new byte[6];
+                    int id = 0;
+                    for (int k = j*6; k < j*6 + 6; k++)
+                    {
+                        tmp[id] = _XOR1[k];
+                        id++;
+                    }
+
+                    number4Byte = getValueInSBox(j, tmp);
+                    id = 0;
+                    for (int k = j*4; k < j*4 + 4; k++)
+                    {
+                        afterSBox[k] = number4Byte[id];
+                    }
+
+                }
+
+
+                afterSplitPerm = permutation.permutation(splitHalfPerm, afterSBox, 32);
+
+                for (int j = 0; j < 32; j++)
+                {
+                    _XOR2[j] = (byte)(leftMessageBlock[j] ^ afterSplitPerm[j]);
+                }
+
+                leftMessageBlock = tempRightForLeft;
+                rightMessageBlock = _XOR2;
+            }
+
+            for (int i = 0; i < 32; i++)
+            {
+                encryptedMessage[i] = rightMessageBlock[i];
+                encryptedMessage[i + 32] = leftMessageBlock[i];
+            }
+
+            encryptedMessage = permutation.permutation(finalPerm, encryptedMessage, 64);
+
+            return encryptedMessage;
+        }
+
+        public byte[] decrypt(byte[] message, char[] key)
+        {
+            messageBlock = new MessageBlock(message);
+            keyBlock = new KeyBlock(key);
+            leftMessageBlock = messageBlock.getLeftBlock();
+            rightMessageBlock = messageBlock.getRightBlock();
+
+            for (int i = 16; i > 0; i--)
+            {
+                tempRightForLeft = rightMessageBlock;
+
+                extentionPermutation();
+                keyBlock.keyBlockRoundDecrypt(i);
+                keyForXOR = keyBlock.getPC2();
+
+                for (int j = 0; j < 48; j++)
+                {
+                    _XOR1[j] = (byte)(extentionPermutationBlock[j] ^ keyForXOR[j]);
+                }
+
+                byte[] number4Byte = new byte[4];
+
+                for (int j = 0; j < 8; j++)
+                {
+                    byte[] tmp = new byte[6];
+                    int id = 0;
+                    for (int k = j * 6; k < j * 6 + 6; k++)
+                    {
+                        tmp[id] = _XOR1[k];
+                        id++;
+                    }
+
+                    number4Byte = getValueInSBox(j, tmp);
+                    id = 0;
+                    for (int k = j * 4; k < j * 4 + 4; k++)
+                    {
+                        afterSBox[k] = number4Byte[id];
+                    }
+                }
+
+                afterSplitPerm = permutation.permutation(splitHalfPerm, afterSBox, 32);
+                for (int j = 0; j < 32; j++)
+                {
+                    _XOR2[j] = (byte)(leftMessageBlock[j] ^ afterSplitPerm[j]);
+                }
+                leftMessageBlock = tempRightForLeft;
+                rightMessageBlock = _XOR2;
+            }
+            for (int i = 0; i < 32; i++)
+            {
+                decryptedMessage[i] = rightMessageBlock[i];
+                decryptedMessage[i + 32] = leftMessageBlock[i];
+            }
+
+            decryptedMessage = permutation.permutation(finalPerm, decryptedMessage, 64);
+            return encryptedMessage;
+        }
+        public MessageBlock getMessageBlock()
+        {
+            return messageBlock;
+        }
+
+        private void extentionPermutation()
+        {
+            extentionPermutationBlock = permutation.permutation(expansionPerm, rightMessageBlock, 48);
+        }
+
+        private byte[] getValueInSBox(int SBoxNum, byte[] _6BitsTab)
+        {
+            byte[] row = { _6BitsTab[0], _6BitsTab[5] };
+            byte[] column = { _6BitsTab[1], _6BitsTab[2], _6BitsTab[3], _6BitsTab[4] };
+
+            int rowId = row[0] * 2 + row[1];
+            int columnId = column[0] * 8 + column[1] * 4 + column[2] * 2 + column[3];
+
+            int number = SBox[SBoxNum][((rowId * 16) + columnId)];
+
+            byte[] block = new byte[4];
+            byte tmp;
+            for (int i = 0; i < 4; i++)
+            {
+                block[i] = (byte)(number % 2);
+                number = (byte)(number / 2);
+
+            }
+            for (int i = 0; i < 2; i++)
+            {
+                tmp = block[i];
+                block[i] = block[3 - i];
+                block[3 - i] = tmp;
+            }
+
+            return block;
+        }
     }
+
 }

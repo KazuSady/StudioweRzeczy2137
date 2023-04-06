@@ -52,6 +52,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MessageBlock.cs" />
+    <Compile Include="Permutation.cs" />
+    <Compile Include="KeyBlock.cs" />
     <Compile Include="DES.cs" />
     <Compile Include="UI.cs">
       <SubType>Form</SubType>
