@@ -20,14 +20,19 @@ namespace DESX
             // key = 863e81e9
             // message = dupachuj
             Permutation permutation = new Permutation();
-            DES dES = new DES();
+            DES des = new DES();
+            DES des2 = new DES();
             byte[] messageByte = permutation.charToByteArray(message, 64);
-            byte[] messageEncrypted = dES.enryptBlock(messageByte, key, false);
-            byte[] messageDecrypted = dES.enryptBlock(messageEncrypted, key, true);
+            byte[] messageEncrypted = des.enryptBlock(messageByte, key, false);
+            byte[] messageDecrypted = des2.enryptBlock(messageEncrypted, key, true);
 
             Console.WriteLine(permutation.showByte(messageByte));
             Console.WriteLine(permutation.showByte(messageEncrypted));
             Console.WriteLine(permutation.showByte(messageDecrypted));
+
+            Console.WriteLine(permutation.showASCII(messageByte));
+            Console.WriteLine(permutation.showASCII(messageEncrypted));
+            Console.WriteLine(permutation.showASCII(messageDecrypted));
         }
     }
 
