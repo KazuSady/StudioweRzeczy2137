@@ -16,23 +16,18 @@ namespace DESX
             //Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new UI());
             char[] key = { '8', '6', '3', 'e', '8', '1', 'e', '9' };
-            char[] message = { 'd', 'u', 'p', 'a', 'c', 'h', 'u','j' };
+            char[] message = { 'd', 'u', 'p', 'a', 'c', 'h', 'u', 'j'};
             // key = 863e81e9
             // message = dupachuj
-
+            Permutation permutation = new Permutation();
             DES dES = new DES();
+            byte[] messageByte = permutation.charToByteArray(message, 64);
+            byte[] messageEncrypted = dES.enryptBlock(messageByte, key, false);
+            byte[] messageDecrypted = dES.enryptBlock(messageEncrypted, key, true);
 
-            byte[] messageEncrypted = dES.enrypt(message, key);
-            byte[] messageOriginal = dES.getMessageBlock().getBlock();
-
-            Console.WriteLine(dES.showASCII(messageOriginal));
-
-            Console.WriteLine(dES.showASCII(messageEncrypted));
-
-            byte[] messageDecrypted = dES.decrypt(messageEncrypted, key);
-            Console.WriteLine(dES.showASCII(messageDecrypted));
-
-
+            Console.WriteLine(permutation.showByte(messageByte));
+            Console.WriteLine(permutation.showByte(messageEncrypted));
+            Console.WriteLine(permutation.showByte(messageDecrypted));
         }
     }
 

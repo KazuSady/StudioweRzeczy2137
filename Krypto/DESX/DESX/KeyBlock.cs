@@ -34,7 +34,7 @@ namespace DESX
         private byte[] block;
         private byte[] leftBlock = new byte[28];
         private byte[] rightBlock = new byte[28];
-        private byte[] pc2Block = new byte[48];
+        private byte[] subKey = new byte[48];
         private byte[] connectedBlock = new byte[56];
 
 
@@ -63,25 +63,16 @@ namespace DESX
             this.rightBlock = permutation.permutation(right, block, 28);
         }
 
-        public void keyBlockRoundEncrypt(int round)
+        public void generateSubKey(int round)
         {
             shiftLeft(circularShift[round]);
             connect();
             permutationTwo();
         }
-        public void keyBlockRoundDecrypt(int round)
+        public byte[] getSubKey()
         {
-            shiftRight(circularShift[round]);
-            connect();
-            permutationTwo();
+            return subKey;
         }
-
-        public byte[] getPC2()
-        {
-            return pc2Block;
-        }
-
-
 
         private void shiftLeft(byte repeat)
         {
@@ -98,21 +89,6 @@ namespace DESX
                 rightBlock[27] = tmpRight;
             }
         }
-        private void shiftRight(byte repeat)
-        {
-            for (int j = 0; j < repeat; j++)
-            {
-                byte tmpLeft = leftBlock[27];
-                byte tmpRight = rightBlock[27];
-                for (int i = 27; i > 0; i--)
-                {
-                    leftBlock[i] = leftBlock[i - 1];
-                    rightBlock[i] = rightBlock[i - 1];
-                }
-                leftBlock[0] = tmpLeft;
-                rightBlock[0] = tmpRight;
-            }
-        }
 
         private void connect()
         {
@@ -125,12 +101,9 @@ namespace DESX
         }
         private void permutationTwo()
         {
-            this.pc2Block = permutation.permutation(pc2, connectedBlock, 48);
+            this.subKey = permutation.permutation(pc2, connectedBlock, 48);
 
         }
-        public byte[] getBlock()
-        {
-            return pc2Block;
-        }
+
     }
 }

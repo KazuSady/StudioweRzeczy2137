@@ -1,6 +1,10 @@
 ﻿using PdfSharp.Pdf.Content.Objects;
 using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Drawing;
+using System.Linq;
+using System.Runtime.ConstrainedExecution;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
@@ -10,6 +14,17 @@ namespace DESX
     internal class DES
     {
         private Permutation permutation = new Permutation();
+
+        private byte[] permutationE = {
+            32,  1,  2,  3,  4,  5,
+            4,  5,  6,  7,  8,  9,
+            8,  9, 10, 11, 12, 13,
+            12, 13, 14, 15, 16, 17,
+            16, 17, 18, 19, 20, 21,
+            20, 21, 22, 23, 24, 25,
+            24, 25, 26, 27, 28, 29,
+            28, 29, 30, 31, 32,  1
+        };
         private byte[][] SBox = {
             new byte[]{
                     14,  4, 13,  1,  2, 15, 11,  8,  3, 10,  6, 12,  5,  9,  0,  7,
@@ -52,6 +67,12 @@ namespace DESX
                      7, 11,  4,  1,  9, 12, 14,  2,  0,  6, 10, 13, 15,  3,  5,  8,
                      2,  1, 14,  7,  4, 10,  8, 13, 15, 12,  9,  0,  3,  5,  6, 11}
     };
+        private byte[] permutationP = {
+            16,  7, 20, 21, 29, 12, 28, 17,
+             1, 15, 23, 26,  5, 18, 31, 10,
+             2,  8, 24, 14, 32, 27,  3,  9,
+            19, 13, 30,  6, 22, 11,  4, 25
+        };
         private byte[] finalPerm = {
             40,  8, 48, 16, 56, 24, 64, 32,
             39,  7, 47, 15, 55, 23, 63, 31,
@@ -62,32 +83,17 @@ namespace DESX
             34,  2, 42, 10, 50, 18, 58, 26,
             33,  1, 41,  9, 49, 17, 57, 25
         };
-        private byte[] splitHalfPerm = {
-            16,  7, 20, 21, 29, 12, 28, 17,
-             1, 15, 23, 26,  5, 18, 31, 10,
-             2,  8, 24, 14, 32, 27,  3,  9,
-            19, 13, 30,  6, 22, 11,  4, 25
-        };
-        private byte[] expansionPerm = {
-            32,  1,  2,  3,  4,  5,
-            4,  5,  6,  7,  8,  9,
-            8,  9, 10, 11, 12, 13,
-            12, 13, 14, 15, 16, 17,
-            16, 17, 18, 19, 20, 21,
-            20, 21, 22, 23, 24, 25,
-            24, 25, 26, 27, 28, 29,
-            28, 29, 30, 31, 32,  1
-        };
+        List<byte[]> subKeys = new List<byte[]>();
 
-        private byte[] encryptedMessage = new byte[64];
-        private byte[] decryptedMessage = new byte[64];
-        private byte[] extentionPermutationBlock = new byte[48];
-        private byte[] leftMessageBlock = new byte[32];
-        private byte[] rightMessageBlock = new byte[32];
-        private byte[] tempRightForLeft = new byte[32];
-        private byte[] keyForXOR = new byte[48];
-        private byte[] afterSBox = new byte[32];
-        private byte[] afterSplitPerm = new byte[32];
+        private byte[] expantionPermutationBlock = new byte[48];
+        private byte[] substitutionPermutationBlock = new byte[32];
+        private byte[] permutationBlock = new byte[32];
+        private byte[] connectedBlock = new byte[64];
+        private byte[] finalBlock = new byte[64];
+
+        private byte[] prevRight = new byte[32];
+        private byte[] leftBlock = new byte[32];
+        private byte[] rightBlock = new byte[32];
 
         private byte[] _XOR1 = new byte[48];
         private byte[] _XOR2 = new byte[48];
@@ -95,125 +101,87 @@ namespace DESX
         private KeyBlock keyBlock;
         private MessageBlock messageBlock;
 
-        public byte[] enrypt(char[] message, char[] key)
+        public byte[] enryptBlock(byte[] message, char[] key, bool decrypt)
         {
-            messageBlock = new MessageBlock(message);
             keyBlock = new KeyBlock(key);
-            leftMessageBlock = messageBlock.getLeftBlock();
-            rightMessageBlock = messageBlock.getRightBlock();
+            messageBlock = new MessageBlock(message);
+
+            rightBlock = messageBlock.getRightBlock();
+            leftBlock = messageBlock.getLeftBlock();
+            for (int i = 0; i < 16; i++)
+            {
+                keyBlock.generateSubKey(i);
+                subKeys.Insert(i, keyBlock.getSubKey());    // generujemy 16 pod-kluczy z otrzymanego klucza pierwotnego
+            }
+
+            if (decrypt)
+            {
+                subKeys.Reverse();
+            }
 
             for (int i = 0; i < 16; i++)
             {
-                tempRightForLeft = rightMessageBlock;
+                prevRight = rightBlock;
+                expansionPermutation();                 // poszerzamy prawy blok wiadomości z 32 bitów do 48 bitów poprzez permutacje
 
-                extentionPermutation();
-                keyBlock.keyBlockRoundEncrypt(i);
-                keyForXOR = keyBlock.getPC2();
-
-                for (int j = 0; j < 48; j++)
-                {
-                    _XOR1[j] = (byte)(extentionPermutationBlock[j] ^ keyForXOR[j]);
-                }
-
-                int number;
-
-                for (int j = 0; j < 8; j++)
-                {
-                    byte[] tmp = new byte[6];
-                    int id = 0;
-                    for (int k = j*6; k < j*6 + 6; k++)
-                    {
-                        tmp[id] = _XOR1[k];
-                        id++;
-                    }
-
-                    number = SBox[j][getValueInSBox(tmp)];
-
-                    Array.Copy(toByteArray(number), 0, afterSBox, j * 4, 4);
-                }
-
-
-                afterSplitPerm = permutation.permutation(splitHalfPerm, afterSBox, 32);
-
-                for (int j = 0; j < 32; j++)
-                {
-                    _XOR2[j] = (byte)(leftMessageBlock[j] ^ afterSplitPerm[j]);
-                }
-
-                leftMessageBlock = tempRightForLeft;
-                rightMessageBlock = _XOR2;
+                _XOR1 = permutation.xor(expantionPermutationBlock, subKeys.ElementAt(i));
+                // wykonujemy operacje xor na poszerzonym prawym bloku oraz pod-kluczu dla aktualnej rundy: wynik 48 bitowy
+                applySubsitutionBoxes(_XOR1);
+                // wykorzystanie Substitution Boxow, 32 bitowy wynik zapisany w polu substitutionPermutationBlock
+                permutationPermutation();
+                // permutacja niezmieniajaca rozmiau bloku, 32 bitowy wynik zapisany w polu permutationBlock 
+                _XOR2 = permutation.xor(leftBlock, permutationBlock);
+                // wykonujemy operacje xor na pierwotnym lewym bloku oraz permutowanym prawym, wynik 32 bitowy i blok w prawy w następnej rundzie  
+                rightBlock = _XOR2;
+                leftBlock = prevRight;
             }
-
-            Array.Copy(leftMessageBlock, 0, encryptedMessage, 0, 32);
-            Array.Copy(rightMessageBlock, 0, encryptedMessage, 32, 32);
-
-            encryptedMessage = permutation.permutation(finalPerm, encryptedMessage, 64);
-
-            return encryptedMessage;
+            Array.Copy(leftBlock, 0, connectedBlock, 0, 32);
+            Array.Copy(rightBlock, 0, connectedBlock, 32, 32);
+            finalPermutation();
+            return finalBlock;
         }
 
-        public byte[] decrypt(byte[] message, char[] key)
-        {
-            messageBlock = new MessageBlock(message);
-            keyBlock = new KeyBlock(key);
-            leftMessageBlock = messageBlock.getLeftBlock();
-            rightMessageBlock = messageBlock.getRightBlock();
 
-            for (int i = 16; i > 0; i--)
+        private void expansionPermutation()
+        {
+            expantionPermutationBlock = permutation.permutation(permutationE, rightBlock, 48);
+        }
+        private void permutationPermutation()
+        {
+            permutationBlock = permutation.permutation(permutationP, substitutionPermutationBlock, 32);
+        }
+        private void finalPermutation()
+        {
+            finalBlock = permutation.permutation(finalPerm, connectedBlock, 64);
+        }
+
+        private void applySubsitutionBoxes(byte[] afterXorBlock)
+        {
+            byte[] result = new byte[32];
+            byte[] tmp = new byte[6];
+            byte[] numberInBytes = new byte[4];
+            int index = 0;
+            int count = 0;
+            int SBoxIndex = 0;
+
+            for(int i = 0; i < afterXorBlock.Length; i++)
             {
-                tempRightForLeft = rightMessageBlock;
-
-                extentionPermutation();
-                keyBlock.keyBlockRoundDecrypt(i);
-                keyForXOR = keyBlock.getPC2();
-
-                for (int j = 0; j < 48; j++)
+                tmp[count] = afterXorBlock[i];
+                count++;
+                if (count == 6)
                 {
-                    _XOR1[j] = (byte)(extentionPermutationBlock[j] ^ keyForXOR[j]);
+                    int number = SBox[SBoxIndex][getValueIndexInSBox(tmp)];
+                    SBoxIndex++;
+                    numberInBytes = intToByteArray(number);
+                    Array.Copy(numberInBytes, 0, result, index, 4);
+                    index += 4;
+                    count = 0;
                 }
-
-                int number;
-
-                for (int j = 0; j < 8; j++)
-                {
-                    byte[] tmp = new byte[6];
-                    int id = 0;
-                    for (int k = j * 6; k < j * 6 + 6; k++)
-                    {
-                        tmp[id] = _XOR1[k];
-                        id++;
-                    }
-
-                    number = SBox[j][getValueInSBox(tmp)];
-
-                    Array.Copy(toByteArray(number), 0, afterSBox, j * 4, 4);
-                }
-
-                afterSplitPerm = permutation.permutation(splitHalfPerm, afterSBox, 32);
-                for (int j = 0; j < 32; j++)
-                {
-                    _XOR2[j] = (byte)(leftMessageBlock[j] ^ afterSplitPerm[j]);
-                }
-                leftMessageBlock = tempRightForLeft;
-                rightMessageBlock = _XOR2;
             }
-            Array.Copy(leftMessageBlock, 0, decryptedMessage, 0, 32);
-            Array.Copy(rightMessageBlock,0, decryptedMessage,32,32);
 
-            decryptedMessage = permutation.permutation(finalPerm, decryptedMessage, 64);
-            return decryptedMessage;
+            substitutionPermutationBlock = result;
         }
-        public MessageBlock getMessageBlock()
-        {
-            return messageBlock;
-        }
-
-        private void extentionPermutation()
-        {
-            extentionPermutationBlock = permutation.permutation(expansionPerm, rightMessageBlock, 48);
-        }
-
-        private int getValueInSBox(byte[] _6BitsTab)
+        private int getValueIndexInSBox(byte[] _6BitsTab)
         {
             byte[] row = { _6BitsTab[0], _6BitsTab[5] };
             byte[] column = { _6BitsTab[1], _6BitsTab[2], _6BitsTab[3], _6BitsTab[4] };
@@ -229,7 +197,7 @@ namespace DESX
                 tmp = tmp * 2;
             }
             tmp = 1;
-            for (int i =  column.Length - 1; i  >= 0; i--)
+            for (int i = column.Length - 1; i >= 0; i--)
             {
                 columnID += column[i] * tmp;
                 tmp = tmp * 2;
@@ -237,9 +205,8 @@ namespace DESX
             resultId = rowID * 16 + columnID;
 
             return resultId;
-        }
-
-        private byte[] toByteArray(int number)
+        } 
+        private byte[] intToByteArray(int number)
         {
             byte[] block = new byte[4];
             byte tmp;
@@ -257,29 +224,7 @@ namespace DESX
             }
             return block;
         }
-        public string showASCII(byte[] input)
-        {
-            string result = "";
-            string temp = "";
-            int count = 0;
-            for (int i = 0; i < input.Length; i++)
-            {
-                temp += input[i].ToString();
-                count++;
-                if (count == 8)
-                {
-                    count = 0;
-                    byte binary = Convert.ToByte(temp, 2);
-                    char value = Convert.ToChar(binary);
-                    result += value.ToString();
-                    temp = "";
-                }
-
-            }
-            return result;
-        }
-
-
+        
     }
 
 }
