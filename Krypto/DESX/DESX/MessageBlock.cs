@@ -69,6 +69,7 @@ namespace DESX
             return block;
         }
 
+
         private void splitBlock()
         {
             for (int i = 0; i < 32 ; i++)
@@ -77,7 +78,6 @@ namespace DESX
                 this.rightBlock[i] = block[i + 32];
             }
         }
-
         
     }
 }

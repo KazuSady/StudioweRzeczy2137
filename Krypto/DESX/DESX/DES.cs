@@ -1,5 +1,8 @@
-﻿using System;
+﻿using PdfSharp.Pdf.Content.Objects;
+using System;
 using System.Data.SqlClient;
+using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 using static System.Windows.Forms.VisualStyles.VisualStyleElement;
 
 namespace DESX
@@ -112,7 +115,7 @@ namespace DESX
                     _XOR1[j] = (byte)(extentionPermutationBlock[j] ^ keyForXOR[j]);
                 }
 
-                byte[] number4Byte = new byte[4];
+                int number;
 
                 for (int j = 0; j < 8; j++)
                 {
@@ -124,13 +127,9 @@ namespace DESX
                         id++;
                     }
 
-                    number4Byte = getValueInSBox(j, tmp);
-                    id = 0;
-                    for (int k = j*4; k < j*4 + 4; k++)
-                    {
-                        afterSBox[k] = number4Byte[id];
-                    }
+                    number = SBox[j][getValueInSBox(tmp)];
 
+                    Array.Copy(toByteArray(number), 0, afterSBox, j * 4, 4);
                 }
 
 
@@ -145,11 +144,8 @@ namespace DESX
                 rightMessageBlock = _XOR2;
             }
 
-            for (int i = 0; i < 32; i++)
-            {
-                encryptedMessage[i] = rightMessageBlock[i];
-                encryptedMessage[i + 32] = leftMessageBlock[i];
-            }
+            Array.Copy(leftMessageBlock, 0, encryptedMessage, 0, 32);
+            Array.Copy(rightMessageBlock, 0, encryptedMessage, 32, 32);
 
             encryptedMessage = permutation.permutation(finalPerm, encryptedMessage, 64);
 
@@ -176,7 +172,7 @@ namespace DESX
                     _XOR1[j] = (byte)(extentionPermutationBlock[j] ^ keyForXOR[j]);
                 }
 
-                byte[] number4Byte = new byte[4];
+                int number;
 
                 for (int j = 0; j < 8; j++)
                 {
@@ -188,12 +184,9 @@ namespace DESX
                         id++;
                     }
 
-                    number4Byte = getValueInSBox(j, tmp);
-                    id = 0;
-                    for (int k = j * 4; k < j * 4 + 4; k++)
-                    {
-                        afterSBox[k] = number4Byte[id];
-                    }
+                    number = SBox[j][getValueInSBox(tmp)];
+
+                    Array.Copy(toByteArray(number), 0, afterSBox, j * 4, 4);
                 }
 
                 afterSplitPerm = permutation.permutation(splitHalfPerm, afterSBox, 32);
@@ -204,14 +197,11 @@ namespace DESX
                 leftMessageBlock = tempRightForLeft;
                 rightMessageBlock = _XOR2;
             }
-            for (int i = 0; i < 32; i++)
-            {
-                decryptedMessage[i] = rightMessageBlock[i];
-                decryptedMessage[i + 32] = leftMessageBlock[i];
-            }
+            Array.Copy(leftMessageBlock, 0, decryptedMessage, 0, 32);
+            Array.Copy(rightMessageBlock,0, decryptedMessage,32,32);
 
             decryptedMessage = permutation.permutation(finalPerm, decryptedMessage, 64);
-            return encryptedMessage;
+            return decryptedMessage;
         }
         public MessageBlock getMessageBlock()
         {
@@ -223,33 +213,73 @@ namespace DESX
             extentionPermutationBlock = permutation.permutation(expansionPerm, rightMessageBlock, 48);
         }
 
-        private byte[] getValueInSBox(int SBoxNum, byte[] _6BitsTab)
+        private int getValueInSBox(byte[] _6BitsTab)
         {
             byte[] row = { _6BitsTab[0], _6BitsTab[5] };
             byte[] column = { _6BitsTab[1], _6BitsTab[2], _6BitsTab[3], _6BitsTab[4] };
 
-            int rowId = row[0] * 2 + row[1];
-            int columnId = column[0] * 8 + column[1] * 4 + column[2] * 2 + column[3];
+            int rowID = 0;
+            int columnID = 0;
+            int resultId;
+            int tmp = 1;
 
-            int number = SBox[SBoxNum][((rowId * 16) + columnId)];
+            for (int i = row.Length - 1; i >= 0; i--)
+            {
+                rowID += row[i] * tmp;
+                tmp = tmp * 2;
+            }
+            tmp = 1;
+            for (int i =  column.Length - 1; i  >= 0; i--)
+            {
+                columnID += column[i] * tmp;
+                tmp = tmp * 2;
+            }
+            resultId = rowID * 16 + columnID;
 
+            return resultId;
+        }
+
+        private byte[] toByteArray(int number)
+        {
             byte[] block = new byte[4];
             byte tmp;
             for (int i = 0; i < 4; i++)
             {
                 block[i] = (byte)(number % 2);
                 number = (byte)(number / 2);
-
             }
+
             for (int i = 0; i < 2; i++)
             {
                 tmp = block[i];
                 block[i] = block[3 - i];
                 block[3 - i] = tmp;
             }
-
             return block;
         }
+        public string showASCII(byte[] input)
+        {
+            string result = "";
+            string temp = "";
+            int count = 0;
+            for (int i = 0; i < input.Length; i++)
+            {
+                temp += input[i].ToString();
+                count++;
+                if (count == 8)
+                {
+                    count = 0;
+                    byte binary = Convert.ToByte(temp, 2);
+                    char value = Convert.ToChar(binary);
+                    result += value.ToString();
+                    temp = "";
+                }
+
+            }
+            return result;
+        }
+
+
     }
 
 }

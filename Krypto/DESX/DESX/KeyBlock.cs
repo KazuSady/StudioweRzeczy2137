@@ -1,4 +1,6 @@
-﻿namespace DESX
+﻿using static System.Windows.Forms.VisualStyles.VisualStyleElement;
+
+namespace DESX
 {
     internal class KeyBlock
     {
@@ -98,14 +100,14 @@
         }
         private void shiftRight(byte repeat)
         {
-            for (int i = 0; i < repeat; i++)
+            for (int j = 0; j < repeat; j++)
             {
                 byte tmpLeft = leftBlock[27];
                 byte tmpRight = rightBlock[27];
-                for(int j = 27; j > 0 ; j--)
+                for (int i = 27; i > 0; i--)
                 {
-                    leftBlock[j] = leftBlock[j - 1];
-                    rightBlock[j] = rightBlock[j - 1];
+                    leftBlock[i] = leftBlock[i - 1];
+                    rightBlock[i] = rightBlock[i - 1];
                 }
                 leftBlock[0] = tmpLeft;
                 rightBlock[0] = tmpRight;
@@ -125,6 +127,10 @@
         {
             this.pc2Block = permutation.permutation(pc2, connectedBlock, 48);
 
+        }
+        public byte[] getBlock()
+        {
+            return pc2Block;
         }
     }
 }
