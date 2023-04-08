@@ -107,8 +107,8 @@ namespace DESX
             keyBlock = new KeyBlock(key);
             messageBlock = new MessageBlock(message);
 
-            prevRight = messageBlock.getRightBlock();
-            prevLeft = messageBlock.getLeftBlock();
+            rightBlock = messageBlock.getRightBlock();
+            leftBlock = messageBlock.getLeftBlock();
             for (int i = 0; i < 16; i++)
             {
                 keyBlock.generateSubKey(i);
@@ -122,7 +122,7 @@ namespace DESX
 
             for (int i = 0; i < 16; i++)
             {
-                leftBlock = prevRight;
+                prevRight = rightBlock;
                 expansionPermutation();                 // poszerzamy prawy blok wiadomości z 32 bitów do 48 bitów poprzez permutacje
 
                 _XOR1 = permutation.xor(expantionPermutationBlock, subKeys.ElementAt(i));
@@ -134,11 +134,10 @@ namespace DESX
                 _XOR2 = permutation.xor(leftBlock, permutationBlock);
                 // wykonujemy operacje xor na pierwotnym lewym bloku oraz permutowanym prawym, wynik 32 bitowy i blok w prawy w następnej rundzie  
                 rightBlock = _XOR2;
-                prevRight = rightBlock;
-                prevLeft = leftBlock;
+                leftBlock = prevRight;
             }
-            Array.Copy(leftBlock, 0, connectedBlock, 0, 32);
-            Array.Copy(rightBlock, 0, connectedBlock, 32, 32);
+            Array.Copy(rightBlock, 0, connectedBlock, 0, 32);
+            Array.Copy(leftBlock, 0, connectedBlock, 32, 32);
             finalPermutation();
             return finalBlock;
         }
