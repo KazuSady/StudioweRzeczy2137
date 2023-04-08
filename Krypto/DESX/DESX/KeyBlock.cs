@@ -38,33 +38,16 @@ namespace DESX
         private byte[] connectedBlock = new byte[56];
 
 
-        public KeyBlock(char[] _8ByteKey)
+        public KeyBlock(byte[] _8ByteKey)
         {
-            int[] intRepresentationKey = new int[8];
-            for (int i = 0; i < 8; i++)
-            {
-                intRepresentationKey[i] = _8ByteKey[i];
-            }
-
-            byte[] tmpBlock = new byte[64];
-            int nextRow = 0;
-            for (int i = 0; i < 8; i++)
-            {
-                for (int j= 7 + nextRow; j >= nextRow; j--)
-                {
-                    tmpBlock[j] = (byte)(intRepresentationKey[i] % 2);
-                    intRepresentationKey[i] = intRepresentationKey[i] / 2;
-                }
-                nextRow += 8;
-            }
-            this.block = tmpBlock;
+            this.block = _8ByteKey;
 
             this.leftBlock = permutation.permutation(left, block, 28);
             this.rightBlock = permutation.permutation(right, block, 28);
         }
 
         public void generateSubKey(int round)
-        {
+        { 
             shiftLeft(circularShift[round]);
             connect();
             permutationTwo();

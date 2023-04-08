@@ -102,7 +102,7 @@ namespace DESX
         private KeyBlock keyBlock;
         private MessageBlock messageBlock;
 
-        public byte[] enryptBlock(byte[] message, char[] key, bool decrypt)
+        public byte[] enryptBlock(byte[] message, byte[] key, bool decrypt)
         {
             keyBlock = new KeyBlock(key);
             messageBlock = new MessageBlock(message);
@@ -140,7 +140,7 @@ namespace DESX
             Array.Copy(leftBlock, 0, connectedBlock, 0, 32);
             Array.Copy(rightBlock, 0, connectedBlock, 32, 32);
             finalPermutation();
-                return finalBlock;
+            return finalBlock;
         }
 
 
