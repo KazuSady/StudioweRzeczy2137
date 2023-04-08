@@ -92,7 +92,6 @@ namespace DESX
         private byte[] finalBlock = new byte[64];
 
         private byte[] prevRight = new byte[32];
-        private byte[] prevLeft = new byte[32];
         private byte[] leftBlock = new byte[32];
         private byte[] rightBlock = new byte[32];
 
@@ -104,6 +103,7 @@ namespace DESX
 
         public byte[] enryptBlock(byte[] message, byte[] key, bool decrypt)
         {
+            Array.Clear(finalBlock, 0, 64);
             keyBlock = new KeyBlock(key);
             messageBlock = new MessageBlock(message);
 
@@ -139,6 +139,15 @@ namespace DESX
             Array.Copy(rightBlock, 0, connectedBlock, 0, 32);
             Array.Copy(leftBlock, 0, connectedBlock, 32, 32);
             finalPermutation();
+            Array.Clear(expantionPermutationBlock, 0, 48);
+            Array.Clear(substitutionPermutationBlock, 0, 32);
+            Array.Clear(permutationBlock, 0, 32);
+            Array.Clear(connectedBlock, 0, 64);
+            Array.Clear(leftBlock, 0, 32);
+            Array.Clear(rightBlock, 0, 32);
+            Array.Clear(prevRight, 0, 32);
+            Array.Clear(_XOR1, 0, 48);
+            Array.Clear(_XOR2, 0, 32);
             return finalBlock;
         }
 
