@@ -165,6 +165,26 @@ namespace DESX
                 }
             }
         }
+
+        private void CodeIt_Click(object sender, EventArgs e)
+        {
+            DESX desx = new DESX();
+            String key1 = Key1.Text;
+            String key2 = Key2.Text;
+            String key3 = Key3.Text;
+            String text = TextToCode.Text;
+            TextToDecode.Text = desx.encrypt(text, key1, key2, key3, false);
+        }
+
+        private void DecodeIt_Click(object sender, EventArgs e)
+        {
+            DESX desx = new DESX();
+            String key1 = Key1.Text;
+            String key2 = Key2.Text;
+            String key3 = Key3.Text;
+            String text = TextToDecode.Text;
+            TextToCode.Text = desx.encrypt(text, key1, key2, key3, true);
+        }
     }
     }
 
