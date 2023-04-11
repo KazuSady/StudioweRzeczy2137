@@ -1,7 +1,5 @@
-﻿using PdfSharp.SharpZipLib.Zip;
+﻿using System.Collections.Generic;
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 
 namespace DESX
@@ -16,9 +14,10 @@ namespace DESX
 
         // Jezeli decrypt = true, odwracamy kolność użycia kluczy co pozwala na wykonanie całego proceszu szyfrowania tym samym kodem tylko od tyłu
         // Tutaj odwracamy klucze Internal i External wykorzystane kolejno przed i po zaszyfrowaniu wiadomosci DES'em, w DES'ie odwracamy wszystki 16 48-bitowych podkluczy 
-        public string encrypt(string message, string keyDes, string keyInternal, string keyExternal, bool decrypt)
+        public string encrypt(char[] message, string keyDes, string keyInternal, string keyExternal, bool decrypt)
         {
-            keys.Add(permutation.charToByteArray(keyInternal.ToCharArray(),64));
+            keys.Add(permutation.charToByteArray(keyInternal.ToCharArray(), 64));
+            keys.Add(permutation.charToByteArray(keyDes.ToCharArray(), 64));
             keys.Add(permutation.charToByteArray(keyExternal.ToCharArray(), 64));
 
             if (decrypt)
@@ -30,14 +29,14 @@ namespace DESX
             string messagePadding = addPadding(message);
 
             divideBlocks(messagePadding);
-            char[] desKey = keyDes.ToCharArray();
-            for(int i = 0; i < messageBlocks.Count; i++)
+
+            for (int i = 0; i < messageBlocks.Count; i++)
             {
                 DES des = new DES();
-                byte[] blockXOR1 = permutation.xor(messageBlocks.ElementAt(i), keys.ElementAt(0)); 
-                byte [] blockDES = des.enryptBlock(blockXOR1, permutation.charToByteArray(desKey,64), decrypt);
-                byte[] blockXOR2 = permutation.xor(blockDES, keys.ElementAt(1));
-                result += permutation.showASCII(blockXOR2); 
+                byte[] blockXOR1 = permutation.xor(messageBlocks.ElementAt(i), keys.ElementAt(0));
+                byte[] blockDES = des.enryptBlock(blockXOR1, keys.ElementAt(1), decrypt);
+                byte[] blockXOR2 = permutation.xor(blockDES, keys.ElementAt(2));
+                result += permutation.showASCII(blockXOR2);
             }
 
             if (decrypt)
@@ -76,7 +75,7 @@ namespace DESX
                 }
             }
         }
-        private string addPadding(string message)
+        private string addPadding(char[] message)
         {
             string tmpMessage = "";
             int trim = 8 - (message.Length % 8);
@@ -97,5 +96,22 @@ namespace DESX
             }
             return tmpMessage;
         }
+
+        public List<String> generateKeys() 
+        { 
+            List<String> keysRandom = new List<String>();
+            Random random = new Random();
+            char[] result = new char[8];
+            for (int i = 0; i < 3; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    result[j] = Convert.ToChar(random.Next());
+                }
+                keysRandom.Add(result.ToString());
+            }
+            return keysRandom;
+        }
+
     }
 }

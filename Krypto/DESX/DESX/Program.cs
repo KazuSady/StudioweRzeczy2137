@@ -19,13 +19,13 @@ namespace DESX
             DESX desx = new DESX();
             DESX desx2 = new DESX();
 
-            string message = "dupa1234dupa1";
+            string message = "dupa1234";
             string key = "12345678";
             string keyInternal = "87654321";
             string keyExternal = "43218765";
 
-            string messageEncrypted = desx.encrypt(message, key, keyInternal, keyExternal, false);
-            string messageDecrypted = desx2.encrypt(messageEncrypted, key, keyInternal, keyExternal, true);
+            string messageEncrypted = desx.encrypt(message.ToCharArray(), key, keyInternal, keyExternal, false);
+            string messageDecrypted = desx2.encrypt(messageEncrypted.ToCharArray(), key, keyInternal, keyExternal, true);
 
 
             Console.WriteLine(messageEncrypted);
