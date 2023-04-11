@@ -11,17 +11,33 @@ namespace DESX
         private Permutation permutation = new Permutation();
         private string result;
         List<byte[]> messageBlocks = new List<byte[]>();
+        List<byte[]> keys = new List<byte[]>();
 
-        public string encrypt(string message, string key, bool decrypt)
+
+        // Jezeli decrypt = true, odwracamy kolność użycia kluczy co pozwala na wykonanie całego proceszu szyfrowania tym samym kodem tylko od tyłu
+        // Tutaj odwracamy klucze Internal i External wykorzystane kolejno przed i po zaszyfrowaniu wiadomosci DES'em, w DES'ie odwracamy wszystki 16 48-bitowych podkluczy 
+        public string encrypt(string message, string keyDes, string keyInternal, string keyExternal, bool decrypt)
         {
+            keys.Add(permutation.charToByteArray(keyInternal.ToCharArray(),64));
+            keys.Add(permutation.charToByteArray(keyExternal.ToCharArray(), 64));
+
+            if (decrypt)
+            {
+                keys.Reverse();
+            }
+
             string tmpResult = "";
             string messagePadding = addPadding(message);
+
             divideBlocks(messagePadding);
-            char[] desKey = key.ToCharArray();
+            char[] desKey = keyDes.ToCharArray();
             for(int i = 0; i < messageBlocks.Count; i++)
             {
                 DES des = new DES();
-                result += permutation.showASCII(des.enryptBlock(messageBlocks.ElementAt(i), permutation.charToByteArray(desKey,64), decrypt));
+                byte[] blockXOR1 = permutation.xor(messageBlocks.ElementAt(i), keys.ElementAt(0)); 
+                byte [] blockDES = des.enryptBlock(blockXOR1, permutation.charToByteArray(desKey,64), decrypt);
+                byte[] blockXOR2 = permutation.xor(blockDES, keys.ElementAt(1));
+                result += permutation.showASCII(blockXOR2); 
             }
 
             if (decrypt)

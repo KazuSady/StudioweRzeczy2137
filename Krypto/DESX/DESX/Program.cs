@@ -21,9 +21,11 @@ namespace DESX
 
             string message = "dupa1234dupa1";
             string key = "12345678";
+            string keyInternal = "87654321";
+            string keyExternal = "43218765";
 
-            string messageEncrypted = desx.encrypt(message,key, false);
-            string messageDecrypted = desx2.encrypt(messageEncrypted,key,true);
+            string messageEncrypted = desx.encrypt(message, key, keyInternal, keyExternal, false);
+            string messageDecrypted = desx2.encrypt(messageEncrypted, key, keyInternal, keyExternal, true);
 
 
             Console.WriteLine(messageEncrypted);
