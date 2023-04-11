@@ -15,39 +15,20 @@ namespace DESX
             //Application.EnableVisualStyles();
             //Application.SetCompatibleTextRenderingDefault(false);
             //Application.Run(new UI());
-            byte[] key = { 0, 0, 0, 1, 0, 0, 1, 1,
-                0, 0, 1, 1, 0, 1, 0, 0, 
-                0, 1, 0, 1, 0, 1, 1, 1, 
-                0, 1, 1, 1, 1, 0, 0, 1,
-                1, 0, 0, 1, 1, 0, 1, 1, 
-                1, 0, 1, 1, 1, 1, 0, 0, 
-                1, 1, 0, 1, 1, 1, 1, 1, 
-                1, 1, 1, 1, 0, 0, 0, 1 };
-            byte[] message = { 0, 0, 0, 0, 0, 0, 0, 1, 
-                0, 0, 1, 0, 0, 0, 1, 1, 
-                0, 1, 0, 0, 0, 1, 0, 1,
-                0, 1, 1, 0, 0, 1, 1, 1, 
-                1, 0, 0, 0, 1, 0, 0, 1, 
-                1, 0, 1, 0, 1, 0, 1, 1, 
-                1, 1, 0, 0, 1, 1, 0, 1, 
-                1, 1, 1, 0, 1, 1, 1, 1 };
 
-            // key = 64bitKey
-            // message = dupachuj
-            Permutation permutation = new Permutation();
-            DES des = new DES();
-            DES des2 = new DES();
+            DESX desx = new DESX();
+            DESX desx2 = new DESX();
 
-            byte[] messageEncrypted = des.enryptBlock(message, key, false);
-            byte[] messageDecrypted = des2.enryptBlock(messageEncrypted, key, true);
+            string message = "dupa1234dupa1";
+            string key = "12345678";
 
-            Console.WriteLine(permutation.showByte(message));
-            Console.WriteLine(permutation.showByte(messageEncrypted));
-            Console.WriteLine(permutation.showByte(messageDecrypted));
+            string messageEncrypted = desx.encrypt(message,key, false);
+            string messageDecrypted = desx2.encrypt(messageEncrypted,key,true);
 
-            Console.WriteLine(permutation.showASCII(message));
-            Console.WriteLine(permutation.showASCII(messageEncrypted));
-            Console.WriteLine(permutation.showASCII(messageDecrypted));
+
+            Console.WriteLine(messageEncrypted);
+            Console.WriteLine(messageDecrypted);
+
         }
     }
 
