@@ -18,7 +18,7 @@ namespace DESX
         public string encrypt(char[] message, string keyDes, string keyInternal, string keyExternal, bool decrypt)
         {
             keys.Add(permutation.charToByteArray(keyInternal.ToCharArray(), 64));
-            keys.Add(permutation.charToByteArray(keyDes.ToCharArray(), 64));
+            keys.Add(permutation.charToByteArray(keyDes.ToCharArray(), 56));
             keys.Add(permutation.charToByteArray(keyExternal.ToCharArray(), 64));
 
             if (decrypt)
@@ -108,6 +108,7 @@ namespace DESX
                 StringBuilder keyBuilder = new StringBuilder();
                 for (int j = 0; j < 8; j++)
                 {
+                    if (i == 1 && j == 7) break;
                     int randomNumber = random.Next(0, 10);
                     keyBuilder.Append(randomNumber.ToString());
                 }
