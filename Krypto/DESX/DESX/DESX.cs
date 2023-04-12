@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System;
 using System.Linq;
+using System.Text;
 
 namespace DESX
 {
@@ -97,21 +98,24 @@ namespace DESX
             return tmpMessage;
         }
 
-        public List<String> generateKeys() 
-        { 
-            List<String> keysRandom = new List<String>();
+        public List<String> generateKeys()
+        {
+            List<string> keysRandom = new List<string>();
             Random random = new Random();
-            char[] result = new char[8];
+
             for (int i = 0; i < 3; i++)
             {
+                StringBuilder keyBuilder = new StringBuilder();
                 for (int j = 0; j < 8; j++)
                 {
-                    result[j] = Convert.ToChar(random.Next());
+                    int randomNumber = random.Next(0, 10);
+                    keyBuilder.Append(randomNumber.ToString());
                 }
-                keysRandom.Add(result.ToString());
+                string key = keyBuilder.ToString();
+                keysRandom.Add(key);
             }
+
             return keysRandom;
         }
-
     }
 }

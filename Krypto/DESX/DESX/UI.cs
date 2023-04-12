@@ -30,9 +30,11 @@ namespace DESX
 
         private void button1_Click(object sender, EventArgs e)
         {
-            Key1.Text = "1";
-            Key2.Text = "2";
-            Key3.Text = "3";
+            DESX desx = new DESX();
+            List<String> keys = desx.generateKeys();
+            Key1.Text = keys.ElementAt(0);
+            Key2.Text = keys.ElementAt(1);
+            Key3.Text = keys.ElementAt(2);
         }
 
         private void SetText(string text, TextBox TextPlace)
@@ -172,7 +174,7 @@ namespace DESX
             String key1 = Key1.Text;
             String key2 = Key2.Text;
             String key3 = Key3.Text;
-            String text = TextToCode.Text;
+            char[] text = TextToCode.Text.ToCharArray();
             TextToDecode.Text = desx.encrypt(text, key1, key2, key3, false);
         }
 
@@ -182,7 +184,7 @@ namespace DESX
             String key1 = Key1.Text;
             String key2 = Key2.Text;
             String key3 = Key3.Text;
-            String text = TextToDecode.Text;
+            char[] text = TextToDecode.Text.ToCharArray();
             TextToCode.Text = desx.encrypt(text, key1, key2, key3, true);
         }
     }
