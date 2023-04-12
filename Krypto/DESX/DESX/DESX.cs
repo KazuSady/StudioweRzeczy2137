@@ -77,7 +77,7 @@ namespace DESX
             char[] tmpBlock = new char[8];
             byte[] block = new byte[64];
             int index = 0;
-            for (int i = 0; i < (message.Length / 8) * 8; i++)
+            for (int i = 0; i < (message.Length); i++)
             {
                 tmpBlock[index] = message[i];
                 index++;

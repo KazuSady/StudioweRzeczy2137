@@ -1,18 +1,12 @@
 ﻿
-using PdfSharp.Pdf.IO;
+
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Security;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace DESX
 {
@@ -84,10 +78,11 @@ namespace DESX
             {
                 try
                 {
-                    var sr = new StreamReader(WczytajKlucz.FileName);
-                    SetText(sr.ReadLine(), Key1);
-                    SetText(sr.ReadLine(), Key2);
-                    SetText(sr.ReadLine(), Key3);
+                    byte[] bytes = File.ReadAllBytes(WczytajKlucz.FileName);
+                    string text = Encoding.UTF8.GetString(bytes);
+                    SetText(text.Substring(1,8), Key1);
+                    SetText(text.Substring(8, 8), Key2);
+                    SetText(text.Substring(16,8), Key3);
                 }
                 catch (SecurityException ex)
                 {
@@ -154,9 +149,11 @@ namespace DESX
                     {
                         using (BinaryWriter bw = new BinaryWriter(filewrite))
                         {
-                            bw.Write(Key1.Text);
-                            bw.Write(Key2.Text);
-                            bw.Write(Key3.Text);
+                            StringBuilder keysB = new StringBuilder();
+                            keysB.Append(Key1.Text);
+                            keysB.Append(Key2.Text);
+                            keysB.Append(Key3.Text);
+                            bw.Write(keysB.ToString());
                         }
                     }
                 }
@@ -176,9 +173,9 @@ namespace DESX
             String key2 = Key2.Text;
             String key3 = Key3.Text;
             char[] text = TextToCode.Text.ToCharArray();
+            SetText(desx.encrypt(text, key1, key2, key3, false), TextToDecode);
 
-            TextToDecode.Text = desx.encrypt(text, key1, key2, key3, false);
-        }
+        }         
 
         private void DecodeIt_Click(object sender, EventArgs e)
         {
@@ -187,8 +184,7 @@ namespace DESX
             String key2 = Key2.Text;
             String key3 = Key3.Text;
             char[] text = TextToDecode.Text.ToCharArray();
-
-            TextToCode.Text = desx.encrypt(text, key1, key2, key3, true);
+            SetText(desx.encrypt(text, key1, key2, key3, true), TextToCode);
         }
     }
     }
