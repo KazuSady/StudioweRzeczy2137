@@ -89,12 +89,13 @@ namespace DESX
                 }
             }
         }
+        //Wypełnianie bloku, jeżeli nie jest 64-bitowy
         private char [] addPadding(char[] message)
         {
 
             int trim = 8 - (message.Length % 8);
             char[] tmpMessage = new char[message.Length + trim];
-            if (trim == 8)
+            if (trim < 0 && trim > 8)
             {
                 trim = 0;
             }
