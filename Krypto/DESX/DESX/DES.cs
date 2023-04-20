@@ -117,7 +117,7 @@ namespace DESX
             for (int i = 0; i < 16; i++)
             {
                 prevRight = rightBlock;
-                expansionPermutation();                 // poszerzamy prawy blok wiadomości z 32 bitów do 48 bitów poprzez permutacje
+                expansionPermutation();     // poszerzamy prawy blok wiadomości z 32 bitów do 48 bitów poprzez permutacje
 
                 _XOR1 = permutation.xor(expantionPermutationBlock, subKeys.ElementAt(i));
                 // wykonujemy operacje xor na poszerzonym prawym bloku oraz pod-kluczu dla aktualnej rundy: wynik 48 bitowy

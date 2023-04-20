@@ -32,8 +32,8 @@
             this.ReadToCode = new System.Windows.Forms.Button();
             this.ReadToDecode = new System.Windows.Forms.Button();
             this.WczytajDoKodowania = new System.Windows.Forms.OpenFileDialog();
-            this.TextToCode = new System.Windows.Forms.TextBox();
-            this.TextToDecode = new System.Windows.Forms.TextBox();
+           // this.TextToCode = new System.Windows.Forms.TextBox();
+            //this.TextToDecode = new System.Windows.Forms.TextBox();
             this.WczytajDoDekodowania = new System.Windows.Forms.OpenFileDialog();
             this.CodeIt = new System.Windows.Forms.Button();
             this.DecodeIt = new System.Windows.Forms.Button();
@@ -98,7 +98,8 @@
             this.WczytajDoKodowania.FileName = "openFileDialog1";
             // 
             // TextToCode
-            // 
+            //
+            /*
             this.TextToCode.Location = new System.Drawing.Point(7, 86);
             this.TextToCode.Margin = new System.Windows.Forms.Padding(4);
             this.TextToCode.Multiline = true;
@@ -106,6 +107,7 @@
             this.TextToCode.Size = new System.Drawing.Size(360, 259);
             this.TextToCode.TabIndex = 4;
             this.TextToCode.Text = "Wpisz tekst do zakodowania";
+            
             // 
             // TextToDecode
             // 
@@ -116,6 +118,7 @@
             this.TextToDecode.Size = new System.Drawing.Size(360, 257);
             this.TextToDecode.TabIndex = 7;
             this.TextToDecode.Text = "Wpisz tekst do odkodowania";
+            */
             // 
             // WczytajDoDekodowania
             // 
@@ -149,7 +152,7 @@
             // 
             this.ToDecodeGroup.Controls.Add(this.SaveToDecode);
             this.ToDecodeGroup.Controls.Add(this.ReadToDecode);
-            this.ToDecodeGroup.Controls.Add(this.TextToDecode);
+            //this.ToDecodeGroup.Controls.Add(this.TextToDecode);
             this.ToDecodeGroup.Location = new System.Drawing.Point(535, 146);
             this.ToDecodeGroup.Margin = new System.Windows.Forms.Padding(4);
             this.ToDecodeGroup.Name = "ToDecodeGroup";
@@ -175,7 +178,7 @@
             // 
             this.ToCodeGroup.Controls.Add(this.SaveToCode);
             this.ToCodeGroup.Controls.Add(this.ReadToCode);
-            this.ToCodeGroup.Controls.Add(this.TextToCode);
+            //this.ToCodeGroup.Controls.Add(this.TextToCode);
             this.ToCodeGroup.Location = new System.Drawing.Point(14, 146);
             this.ToCodeGroup.Margin = new System.Windows.Forms.Padding(4);
             this.ToCodeGroup.Name = "ToCodeGroup";
@@ -319,8 +322,8 @@
         private System.Windows.Forms.Button ReadToCode;
         private System.Windows.Forms.Button ReadToDecode;
         private System.Windows.Forms.OpenFileDialog WczytajDoKodowania;
-        private System.Windows.Forms.TextBox TextToCode;
-        private System.Windows.Forms.TextBox TextToDecode;
+        //private System.Windows.Forms.TextBox TextToCode;
+        //private System.Windows.Forms.TextBox TextToDecode;
         private System.Windows.Forms.OpenFileDialog WczytajDoDekodowania;
         private System.Windows.Forms.Button CodeIt;
         private System.Windows.Forms.Button DecodeIt;
