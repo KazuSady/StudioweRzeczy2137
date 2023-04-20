@@ -32,14 +32,16 @@
             this.ReadToCode = new System.Windows.Forms.Button();
             this.ReadToDecode = new System.Windows.Forms.Button();
             this.WczytajDoKodowania = new System.Windows.Forms.OpenFileDialog();
-           // this.TextToCode = new System.Windows.Forms.TextBox();
-            //this.TextToDecode = new System.Windows.Forms.TextBox();
             this.WczytajDoDekodowania = new System.Windows.Forms.OpenFileDialog();
             this.CodeIt = new System.Windows.Forms.Button();
             this.DecodeIt = new System.Windows.Forms.Button();
             this.ToDecodeGroup = new System.Windows.Forms.GroupBox();
+            this.Tip1 = new System.Windows.Forms.Label();
+            this.Zakodowany = new System.Windows.Forms.Label();
             this.SaveToDecode = new System.Windows.Forms.Button();
             this.ToCodeGroup = new System.Windows.Forms.GroupBox();
+            this.Odkodowany = new System.Windows.Forms.Label();
+            this.Tip2 = new System.Windows.Forms.Label();
             this.SaveToCode = new System.Windows.Forms.Button();
             this.ZapiszDoKodowania = new System.Windows.Forms.SaveFileDialog();
             this.ZapiszDoDekodowania = new System.Windows.Forms.SaveFileDialog();
@@ -97,29 +99,6 @@
             // 
             this.WczytajDoKodowania.FileName = "openFileDialog1";
             // 
-            // TextToCode
-            //
-            /*
-            this.TextToCode.Location = new System.Drawing.Point(7, 86);
-            this.TextToCode.Margin = new System.Windows.Forms.Padding(4);
-            this.TextToCode.Multiline = true;
-            this.TextToCode.Name = "TextToCode";
-            this.TextToCode.Size = new System.Drawing.Size(360, 259);
-            this.TextToCode.TabIndex = 4;
-            this.TextToCode.Text = "Wpisz tekst do zakodowania";
-            
-            // 
-            // TextToDecode
-            // 
-            this.TextToDecode.Location = new System.Drawing.Point(7, 89);
-            this.TextToDecode.Margin = new System.Windows.Forms.Padding(4);
-            this.TextToDecode.Multiline = true;
-            this.TextToDecode.Name = "TextToDecode";
-            this.TextToDecode.Size = new System.Drawing.Size(360, 257);
-            this.TextToDecode.TabIndex = 7;
-            this.TextToDecode.Text = "Wpisz tekst do odkodowania";
-            */
-            // 
             // WczytajDoDekodowania
             // 
             this.WczytajDoDekodowania.FileName = "openFileDialog2";
@@ -150,9 +129,10 @@
             // 
             // ToDecodeGroup
             // 
+            this.ToDecodeGroup.Controls.Add(this.Tip1);
+            this.ToDecodeGroup.Controls.Add(this.Zakodowany);
             this.ToDecodeGroup.Controls.Add(this.SaveToDecode);
             this.ToDecodeGroup.Controls.Add(this.ReadToDecode);
-            //this.ToDecodeGroup.Controls.Add(this.TextToDecode);
             this.ToDecodeGroup.Location = new System.Drawing.Point(535, 146);
             this.ToDecodeGroup.Margin = new System.Windows.Forms.Padding(4);
             this.ToDecodeGroup.Name = "ToDecodeGroup";
@@ -161,6 +141,24 @@
             this.ToDecodeGroup.TabIndex = 10;
             this.ToDecodeGroup.TabStop = false;
             this.ToDecodeGroup.Text = "Tekst zakodowany";
+            // 
+            // Tip1
+            // 
+            this.Tip1.AutoSize = true;
+            this.Tip1.Location = new System.Drawing.Point(40, 107);
+            this.Tip1.Name = "Tip1";
+            this.Tip1.Size = new System.Drawing.Size(294, 20);
+            this.Tip1.TabIndex = 9;
+            this.Tip1.Text = "Aby odkodować, najpierw wczytaj plik";
+            // 
+            // Zakodowany
+            // 
+            this.Zakodowany.AutoSize = true;
+            this.Zakodowany.Font = new System.Drawing.Font("Century Gothic", 15F);
+            this.Zakodowany.Location = new System.Drawing.Point(7, 221);
+            this.Zakodowany.Name = "Zakodowany";
+            this.Zakodowany.Size = new System.Drawing.Size(0, 31);
+            this.Zakodowany.TabIndex = 6;
             // 
             // SaveToDecode
             // 
@@ -176,9 +174,10 @@
             // 
             // ToCodeGroup
             // 
+            this.ToCodeGroup.Controls.Add(this.Odkodowany);
+            this.ToCodeGroup.Controls.Add(this.Tip2);
             this.ToCodeGroup.Controls.Add(this.SaveToCode);
             this.ToCodeGroup.Controls.Add(this.ReadToCode);
-            //this.ToCodeGroup.Controls.Add(this.TextToCode);
             this.ToCodeGroup.Location = new System.Drawing.Point(14, 146);
             this.ToCodeGroup.Margin = new System.Windows.Forms.Padding(4);
             this.ToCodeGroup.Name = "ToCodeGroup";
@@ -187,6 +186,24 @@
             this.ToCodeGroup.TabIndex = 11;
             this.ToCodeGroup.TabStop = false;
             this.ToCodeGroup.Text = "Tekst do kodowania";
+            // 
+            // Odkodowany
+            // 
+            this.Odkodowany.AutoSize = true;
+            this.Odkodowany.Font = new System.Drawing.Font("Century Gothic", 15F);
+            this.Odkodowany.Location = new System.Drawing.Point(7, 221);
+            this.Odkodowany.Name = "Odkodowany";
+            this.Odkodowany.Size = new System.Drawing.Size(0, 31);
+            this.Odkodowany.TabIndex = 11;
+            // 
+            // Tip2
+            // 
+            this.Tip2.AutoSize = true;
+            this.Tip2.Location = new System.Drawing.Point(40, 107);
+            this.Tip2.Name = "Tip2";
+            this.Tip2.Size = new System.Drawing.Size(290, 20);
+            this.Tip2.TabIndex = 10;
+            this.Tip2.Text = "Aby zakodować, najpierw wczytaj plik";
             // 
             // SaveToCode
             // 
@@ -343,6 +360,10 @@
         private System.Windows.Forms.Button WriteKey;
         private System.Windows.Forms.OpenFileDialog WczytajKlucz;
         private System.Windows.Forms.SaveFileDialog ZapiszKlucz;
+        private System.Windows.Forms.Label Zakodowany;
+        private System.Windows.Forms.Label Tip1;
+        private System.Windows.Forms.Label Odkodowany;
+        private System.Windows.Forms.Label Tip2;
     }
 }
 

@@ -81,6 +81,7 @@ namespace DESX
                 File.WriteAllBytes(ZapiszDoKodowania.FileName, destination);
                 Array.Clear(source,0,source.Length);
                 Array.Clear(destination, 0, destination.Length);
+                Odkodowany.Text = "";
             }
            
         }
@@ -92,6 +93,7 @@ namespace DESX
                 File.WriteAllBytes(ZapiszDoDekodowania.FileName, destination);
                 Array.Clear(source, 0, source.Length);
                 Array.Clear(destination, 0, destination.Length);
+               Zakodowany.Text = "";
             }
         }
 
@@ -129,6 +131,7 @@ namespace DESX
             String key2 = Key2.Text;
             String key3 = Key3.Text;
             destination = desx.encrypt(source, key1, key2, key3, false);
+            Zakodowany.Text = "Zakodowano plik. Zapisz go!";
 
         }         
 
@@ -139,7 +142,10 @@ namespace DESX
             String key2 = Key2.Text;
             String key3 = Key3.Text;
             destination = desx.encrypt(source, key1, key2, key3, true);
+            Odkodowany.Text = "Odkodowano plik. Zapisz go!";
+
         }
+
     }
     }
 
