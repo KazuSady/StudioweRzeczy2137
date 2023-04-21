@@ -25,7 +25,7 @@ namespace Xmodem
             port.ReadTimeout = 10000;
             port.Open();
         }
-
+        //Metoda do obliczenia sumy kontrolnej - odbiornik porównuje ją z tą obliczoną przez nadajnik
         public int Checksum(byte[] data, int size)
         {
             int checksum = 0;
@@ -36,7 +36,7 @@ namespace Xmodem
             checksum %= 256;
             return checksum;
         }
-
+        //Metoda do obliczenia sumy kontrolnej - odbiornik porównuje ją z tą obliczoną przez nadajnik
         public byte[] Calcrc(byte[] data)
         {
             int crc = 0;
@@ -67,8 +67,7 @@ namespace Xmodem
                 byte[] header = new byte[3];
                 while ((counter = reader.Read(buffer, 0, buffer.Length)) != 0)
                 {
-                    if (blockNr ==256) blockNr = 0;
-                    Trace.WriteLine("Block number: " + blockNr);
+                    if (blockNr ==256) blockNr = 0;         
                     if (buffer.Length == 0) throw new Exception();
                     while(sendAgain)
                     {
@@ -96,22 +95,17 @@ namespace Xmodem
                             data[131] = crc[0];
                             data[132] = crc[1];
                         }
-                        Trace.WriteLine("Data length: " + data.Length);
                         port.Write(data, 0, data.Length);
                         try
                         {
                             byte[] received = new byte[1];
-                            Trace.WriteLine("Stuck at: " + port.BytesToRead);
                             port.Read(received, 0, 1);
-                            Trace.WriteLine("Stuck");
-                            if (received[0] == ACK)
+                            if (received[0] == ACK) //Otrzymano ACK - odbiornik potwierdził odbiór danych
                             {
-                                Trace.WriteLine("ACK received: " + received[0]);
                                 sendAgain = false;
                             }
-                            else if (received[0] == NAK)
+                            else if (received[0] == NAK)    //Otrzymano NAK - odbiornik nie dostał danych/są błędne. Należy ponowić przesył
                             {
-                                Trace.WriteLine("NAK received: " + received[0]);
                                 sendAgain = true;
                             }
                         }
@@ -120,7 +114,6 @@ namespace Xmodem
                     blockNr++;
                     sendAgain = true;
                 }
-                Trace.WriteLine("Loop finished");
                 reader.Close();
                 byte[] tmp = new byte[132];
                 tmp[0] = EOT;
@@ -130,15 +123,13 @@ namespace Xmodem
                     try
                     {
                         port.Read(received1, 0, 1);
-                        if (received1[0] == ACK)
+                        if (received1[0] == ACK)    //Otrzymano ACK
                         {
-                            Trace.WriteLine("ACK received: " + received1[0]);
                             break;
                         }
                     }
                     catch (TimeoutException) { }
-                    port.Write(tmp, 0, 132);
-                    Trace.WriteLine("EOT sent");
+                    port.Write(tmp, 0, 132);    //Wysłano EOT - poinformowano o końcu przesyłu danych
                 }
             }
             catch(FileNotFoundException) { }

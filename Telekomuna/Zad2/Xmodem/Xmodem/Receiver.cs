@@ -35,6 +35,7 @@ namespace Xmodem
             }
         }
 
+        //Metoda do obliczenia sumy kontrolnej - odbiornik porównuje ją z tą obliczoną przez nadajnik
         public int Checksum(byte[] data)
         {
             int checksum = 0;
@@ -46,6 +47,7 @@ namespace Xmodem
             return checksum;
         }
 
+        //Metoda do obliczenia sumy kontrolnej - odbiornik porównuje ją z tą obliczoną przez nadajnik
         public byte[] Calcrc(byte[] data)
         {
             int crc = 0;
@@ -71,7 +73,6 @@ namespace Xmodem
             {
                 if (message[i] == 0)
                 {
-                    Trace.WriteLine("i = " + i);
                     textSize = i;
                     break;
                 }
@@ -100,19 +101,16 @@ namespace Xmodem
                 //Wysyłamy informację o gotowości do odbierania danych
                 if (xmodemType == "1")
                 {
-                    port.Write(NAK, 0, 1);
-                    Trace.WriteLine("NAK sent: " + NAK[0]);
+                    port.Write(NAK, 0, 1);  //Wysłano NAK
 
                 }
                 else
                 {
-                    port.Write(C, 0, 1);
-                    Trace.WriteLine("C sent: " + C[0]);
+                    port.Write(C, 0, 1);    //Wysłano C
                 }
                 System.Threading.Thread.Sleep(1000);
-                if(port.BytesToRead > 0)
+                if(port.BytesToRead > 0)    //Otrzymano C lub SOH
                 {
-                    Trace.WriteLine("SOH/C already received");
                     break;
                 }    
             }
@@ -122,21 +120,19 @@ namespace Xmodem
                 if (blockNr == 256) blockNr = 0;
                 if((port.BytesToRead > 132 && xmodemType == "1") || port.BytesToRead >= 133 && xmodemType == "2") 
                 {
-                    Trace.WriteLine("Amount: " +  port.BytesToRead);
                     try
                     {
                         byte[] isEOT = new byte[1];
                         port.Read(isEOT, 0, 1);
+                        //Sprawdzenie, czy przesłane zostały wszystkie bloki. Znak EOT oznacza koniec przesyłania ostatniego bajtu.
                         if (isEOT[0] == EOT)
                         {
                             end = true;
-                            Trace.WriteLine("END");
-                            port.Write(ACK, 0, 1);
-                            Trace.WriteLine("ACK sent");
+                            port.Write(ACK, 0, 1);  //Wysłano ACK
                         }
-                        else if (isEOT[0] == SOH || isEOT[0] == C[0])
+                        //Sprawdzenie, czy otrzymaliśmy początek nagłówka - SOH lub C i rozpoczęcie nasłuchiwania
+                        else if (isEOT[0] == SOH || isEOT[0] == C[0])   //Otrzymano SOH lub C
                         {
-                            Trace.WriteLine("SOH or C received: " + isEOT[0]);
                             bool listening = true;
                             while(listening)
                             {
@@ -144,12 +140,10 @@ namespace Xmodem
                                 {
                                     byte[] header = new byte[2];
                                     port.Read(header, 0, 2);
-                                    if (blockNr == header[0] && header[0] + header[1] == 255)
+                                    if (blockNr == header[0] && header[0] + header[1] == 255)   //Sprawdzenie, czy nagłówek jest prawidłowy
                                     {
                                         toSave = true;
                                     }
-                                    Trace.WriteLine("Expected header: " + blockNr + ", " + (256 - blockNr));
-                                    Trace.WriteLine("Received header: " + header[0] + ", " + header[1]);
                                     listening = false;
                                 }
                                 catch (TimeoutException) { }
@@ -166,9 +160,7 @@ namespace Xmodem
                                     {
                                         control = new byte[1];
                                         port.Read(control, 0, 1);
-                                        Trace.WriteLine("Received checksum: " + control[0]);
-                                        Trace.WriteLine("Checking checksum... " + Checksum(message));
-                                        if (Checksum(message) != control[0])
+                                        if (Checksum(message) != control[0])    //Sprawdzanie poprawności checksumy
                                         {
                                             isControlled = false;
                                         }
@@ -178,23 +170,21 @@ namespace Xmodem
                                         control = new byte[2];
                                         byte[] controlCheck = Calcrc(message);
                                         port.Read(control, 0, 2);
-                                        Trace.WriteLine("Received CRC: " + control[0] + " " + control[1]);
-                                        Trace.WriteLine("Checking CRC... " + controlCheck[0] + " " + controlCheck[1]);
-                                        if (control[0] != controlCheck[0] || control[1] != controlCheck[1])
+                                        if (control[0] != controlCheck[0] || control[1] != controlCheck[1]) //Sprawdzanie poprawności CRC
                                         {
                                             isControlled = false;
                                         }
                                     }
+                                    //Wysyłamy NAK, gdy suma kontrolna się nie zgadza
                                     if (isControlled == false || toSave == false) 
                                     {
                                         toSave = false;
-                                        port.Write(NAK, 0, 1);
-                                        Trace.WriteLine("NAK sent");
+                                        port.Write(NAK, 0, 1);  //Wysłano NAK
                                     }
+                                    //Wysyłamy ACK, gotowi do przyjęcia kolejnego bloku danych
                                     if (toSave)
                                     {
-                                        port.Write(ACK, 0, 1);
-                                        Trace.WriteLine("ACK sent");
+                                        port.Write(ACK, 0, 1);  //Wysłano ACK
                                         WriteToFile(message, _fileName);
                                         blockNr += 1;
                                         toSave = false;
