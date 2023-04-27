@@ -17,6 +17,7 @@ int H[8][16] =
 	{1, 1, 1, 1, 1, 1, 0, 1,	0, 0, 0, 0, 0, 0, 1, 0},   
 	{1, 1, 1, 1, 1, 1, 1, 0,	0, 0, 0, 0, 0, 0, 0, 1},   
 };
+// Zapożyczona z internetu
 
 // sample a = {0110 0001, 1001 1110} 
 // sample b = {0110 0010, 1001 1101} 
@@ -181,19 +182,23 @@ int main()
 	string odkodowanaFileName = "Odkodowana.txt";
 	string wiadomoscFileName = "Wiadomosc.txt";
 	int wybor;
-	cout << "Jaka operacje chcesz wykonac?" << "\n";
-	cout << "1. Kodowanie wiadomosci w pliku wiadomosc.txt" << "\n";
-	cout << "2. Dekodowanie wiadomosci z poprawionymi bledami do pliku odkodowana.txt" << "\n";
-	cout << "Wybor: ";
-	cin >> wybor;
-	switch (wybor) {
-	case 1:
-		Kodowanie(wczytajWiadomosc(wiadomoscFileName), zakodowanaFileName);
-		break;
-	case 2:
-		Dekodowanie(zakodowanaFileName, odkodowanaFileName);
-		break;
-	}
+	do{
+		cout << "Jaka operacje chcesz wykonac?" << "\n";
+		cout << "1. Kodowanie wiadomosci w pliku wiadomosc.txt" << "\n";
+		cout << "2. Dekodowanie wiadomosci z poprawionymi bledami do pliku odkodowana.txt" << "\n";
+		cout << "3. Zakoncz program" << "\n";
+		cout << "Wybor: ";
+		cin >> wybor;
+		switch (wybor) {
+		case 1:
+			Kodowanie(wczytajWiadomosc(wiadomoscFileName), zakodowanaFileName);
+			break;
+		case 2:
+			Dekodowanie(zakodowanaFileName, odkodowanaFileName);
+			break;
+		}
+	} while (wybor != 3);
+
 
 	return 0;
 }

@@ -5,13 +5,12 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.Pane?>
 
-<Pane maxHeight="1200" maxWidth="1200" minHeight="1200" minWidth="1200" prefHeight="1000.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rsasignature.AppController">
+<Pane maxHeight="300" maxWidth="500" minHeight="300" minWidth="500" prefHeight="300" prefWidth="500" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="rsasignature.AppController">
    <children>
       <TextField fx:id="_nPrivate" layoutX="15.0" layoutY="50.0" prefHeight="20.0" prefWidth="180.0" />
-      <TextField fx:id="_dPrivate" layoutX="15.0" layoutY="80.0" prefHeight="20.0" prefWidth="180.0" />
+      <TextField fx:id="_ePrivate" layoutX="15.0" layoutY="80.0" prefHeight="20.0" prefWidth="180.0" />
       <TextField fx:id="_nPublic" layoutX="15.0" layoutY="110.0" prefHeight="20.0" prefWidth="180.0" />
-      <TextField fx:id="_ePublic" layoutX="15.0" layoutY="140.0" prefHeight="20.0" prefWidth="180.0" />
-      <Button layoutX="37.0" layoutY="180.0" mnemonicParsing="false" onAction="#generateKeys" prefHeight="30.0" prefWidth="137.0" text="Generuj klucze" />
+      <TextField fx:id="_dPublic" layoutX="15.0" layoutY="140.0" prefHeight="20.0" prefWidth="180.0" />
 
       <Label layoutX="200.0" layoutY="50.0" prefHeight="20.0" text="(n) Private" />
       <Label layoutX="200.0" layoutY="80.0" prefHeight="20.0" text="(e) Private" />
@@ -21,14 +20,24 @@
       <Button layoutX="15.0" layoutY="14.0" mnemonicParsing="false" onAction="#setBiteSize128" prefWidth="55.0" text="128 Bit" />
       <Button layoutX="75.0" layoutY="14.0" mnemonicParsing="false" onAction="#setBiteSize256" prefWidth="55.0" text="256 Bit" />
       <Button layoutX="135.0" layoutY="14.0" mnemonicParsing="false" onAction="#setBiteSize512" prefWidth="55.0" text="512 Bit" />
-      <Button layoutX="37.0" layoutY="260.0" mnemonicParsing="false" onAction="#saveKeys" prefHeight="30.0" prefWidth="137.0" text="Zapisz klucze" />
+      <Button layoutX="193.0" layoutY="14.0" mnemonicParsing="false" onAction="#generateKeys" prefWidth="100.0" text="Generuj klucze" />
 
-      <Button layoutX="333.0" layoutY="35.0" mnemonicParsing="false" onAction="#generateSignature" prefHeight="30.0" prefWidth="137.0" text="Stworz podpis" />
-      <TextField fx:id="signature" layoutX="311.0" layoutY="95.0" prefHeight="20.0" prefWidth="180.0" />
-      <Button layoutX="333.0" layoutY="145.0" mnemonicParsing="false" onAction="#saveSignature" prefHeight="30.0" prefWidth="137.0" text="Zapisz podpis" />
+      <TextField fx:id="signature" layoutX="306.0" layoutY="31.0" prefHeight="20.0" prefWidth="180.0" />
+      <Button layoutX="334.0" layoutY="65.0" mnemonicParsing="false" onAction="#generateSignature" prefHeight="30.0" prefWidth="137.0" text="Stworz podpis" />
+      <Button layoutX="335.0" layoutY="105.0" mnemonicParsing="false" onAction="#loadSignature" prefHeight="30.0" prefWidth="137.0" text="Wczytaj podpis" />
+      <Button layoutX="335.0" layoutY="145.0" mnemonicParsing="false" onAction="#saveSignature" prefHeight="30.0" prefWidth="137.0" text="Zapisz podpis" />
 
-      <TextField fx:id="isSignCorrect" layoutX="523.0" layoutY="102.0" text="Label" />
-      <Button layoutX="523.0" layoutY="145.0" mnemonicParsing="false" onAction="#verifySignature" prefHeight="30.0" prefWidth="137.0" text="Sprawdź podpis" />
+      <Label fx:id="isSignCorrect" layoutX="335.0" layoutY="276.0" prefHeight="18.0" prefWidth="137.0" />
+      <Button layoutX="335.0" layoutY="206.0" mnemonicParsing="false" onAction="#loadFile" prefHeight="30.0" prefWidth="137.0" text="Wczytaj plik" />
+      <Button layoutX="335.0" layoutY="239.0" mnemonicParsing="false" onAction="#verifySignature" prefHeight="30.0" prefWidth="137.0" text="Sprawdź podpis" />
+
+      <Label fx:id="isFileLoaded" layoutX="334.0" layoutY="186.0" prefHeight="18.0" prefWidth="137.0" />
+
+      <Button layoutX="14.0" layoutY="180.0" mnemonicParsing="false" onAction="#loadPrivateKey" prefHeight="30.0" prefWidth="180.0" text="Wczytaj klucz prywatny" />
+      <Button layoutX="15.0" layoutY="221.0" mnemonicParsing="false" onAction="#loadPublicKey" prefHeight="30.0" prefWidth="180.0" text="Wczytaj klucz publiczny" />
+      <Button layoutX="15.0" layoutY="261.0" mnemonicParsing="false" onAction="#saveKeys" prefHeight="30.0" prefWidth="180.0" text="Zapisz klucze" />
+
+
       
    </children>
 
