@@ -8,7 +8,7 @@ def f1(x):
 def f2(x):
     return pow(2,x)
 def f3(x):
-    return 4 * np.log(x + 3)
+    return np.cos(2*x)
 #------------------------------------------------------
 # Simpson part 1
 def Simpson1(a, b, funkcja):
@@ -44,15 +44,24 @@ def newton_cotes(funkcja, eps):
     delta = 1
     result = 0
     iter = 1
-    a=-10
+    a=0
     while True:
-        resS = Simpson2(a, a + delta, funkcja, eps)
+        resS = Simpson2(a, a+delta, funkcja, eps)
         result += resS
         a += delta
         iter += 1
         if abs(resS) <= abs(eps):
+            b=a+delta
             break
-    print(a, iter)
+    a=0
+    while True:
+        resS = Simpson2(a-delta, a, funkcja, eps)
+        result += resS
+        a -= delta
+        iter += 1
+        if abs(resS) <= abs(eps):
+            break
+    print(a,b, iter)
     return result
 #------------------------------------------------------
 # Współczynniki dla kwadratury Gaussa
@@ -106,7 +115,7 @@ def hermite(wezly, funkcja):
     return result
 #------------------------------------------------------
 # Menu
-print("Wybierz funkcję:\n1 - |x-5|\n2 - 2^x\n3 - 4log(x+3)")
+print("Wybierz funkcję:\n1 - |x-5|\n2 - 2^x\n3 - cos(2x)")
 choice = input()
 print("Podaj ilość węzłów dla kwadratury Gaussa: 2/3/4/5")
 wezly = int(input())
