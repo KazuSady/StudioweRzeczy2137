@@ -24,13 +24,13 @@ namespace Huffman
             _sender = new TcpClient();
             _sender.Connect(remoteEP);
             Console.WriteLine("Mam odbiornik");
-            _reader = new StreamReader(_sender.GetStream());
+            //_reader = new StreamReader(_sender.GetStream());
             _writer = new StreamWriter(_sender.GetStream());
         }
 
         public void StopConnection() 
         {
-            _reader.Close();
+            //_reader.Close();
             _writer.Close();
             _sender.Close();
         }
@@ -38,13 +38,14 @@ namespace Huffman
         public string Send(string mes)
         {
             Huffman huf = new Huffman(mes);
-            
             StreamWriter dictWrite = new StreamWriter("directory.txt");
             dictWrite.Write(huf.GetDictionaryString());
             dictWrite.Close();
             _writer.WriteLine(huf.GetEncode());
-            string response = _reader.ReadToEnd();
-            return response;
+            _writer.WriteLine(huf.GetDictionaryString());
+            //string response = _reader.ReadToEnd();
+            Console.WriteLine("odpowiedx");
+            return "dupa";
         }
             
             
