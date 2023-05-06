@@ -29,16 +29,12 @@ namespace Huffman
             //_writer = new StreamWriter(_clientSocket.GetStream());
             while (true)
             {
-                Console.WriteLine("czekam");
                 string mes = _reader.ReadLine();
-                Console.WriteLine("mam zakodowany");
-                string dic = _reader.ReadLine();
-                StreamWriter dictWrite = new StreamWriter("directory.txt");
+                string dic = _reader.ReadToEnd();
+                StreamWriter dictWrite = new StreamWriter("dictionary.txt");
                 dictWrite.Write(dic);
                 dictWrite.Close();
                 Huffman huf = new Huffman(mes, "dictionary.txt");
-                Console.WriteLine("huff");
-                Console.WriteLine("Received: " + mes);
                 Console.WriteLine("Decoded: " + huf.message);
                 //_writer.WriteLine("ACK");
                 break;

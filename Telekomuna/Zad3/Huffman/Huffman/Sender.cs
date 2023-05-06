@@ -38,7 +38,7 @@ namespace Huffman
         public string Send(string mes)
         {
             Huffman huf = new Huffman(mes);
-            StreamWriter dictWrite = new StreamWriter("directory.txt");
+            StreamWriter dictWrite = new StreamWriter("dictionary.txt");
             dictWrite.Write(huf.GetDictionaryString());
             dictWrite.Close();
             _writer.WriteLine(huf.GetEncode());

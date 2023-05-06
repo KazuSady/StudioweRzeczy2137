@@ -93,9 +93,19 @@ namespace Huffman
         {
             StreamReader sr = new StreamReader(path);
             string tmp;
-            while((tmp = sr.ReadLine()) != null)
+            string tmpsub;
+            StreamReader liner = new StreamReader(path);
+            int lines = 0;
+            while (liner.ReadLine() != null)
             {
-                _decodeDictionary.Add(tmp.Substring(2), tmp.ToCharArray()[0]);
+                lines++;
+            }
+            liner.Close();
+            for(int i = 0; i< lines-1; i++)
+            {
+                tmp = sr.ReadLine();
+                tmpsub = tmp.Substring(2);
+                _decodeDictionary.Add(tmpsub, tmp.ToCharArray()[0]);
             }
             tmp = "";
             StringBuilder sb = new StringBuilder();
