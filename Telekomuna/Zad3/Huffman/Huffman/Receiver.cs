@@ -16,12 +16,11 @@ namespace Huffman
         private TcpClient _clientSocket;
         private TcpListener _serverSocket;
 
-        public void StartListening()
+        public void StartListening(string ip)
         {
-            IPHostEntry host = Dns.GetHostEntry("localhost");
-            IPAddress ipAddress = host.AddressList[0];
-            IPEndPoint localEndPoint = new IPEndPoint(ipAddress, 11000);
+            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(ip), 13000);
 
+            Console.WriteLine(localEndPoint.ToString());
             _serverSocket = new TcpListener(localEndPoint);
             _serverSocket.Start();
 

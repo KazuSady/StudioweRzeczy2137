@@ -4,8 +4,10 @@ Console.WriteLine("Nadajnik czy odbiornik?");
 string choice = Console.ReadLine();
 if (choice.Equals("O") || choice.Equals("o"))
 {
+    Console.WriteLine("Podaj swoj adres ip");
+    string ip = Console.ReadLine();
     Receiver receiver = new Receiver();
-    receiver.StartListening();
+    receiver.StartListening(ip);
     //receiver.StopListening();
 }
 else if (choice.Equals("N") || choice.Equals("n"))

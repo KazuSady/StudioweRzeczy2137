@@ -18,8 +18,8 @@ namespace Huffman
         public void StartConnection(string ip)
         {
             IPAddress ipAddress = IPAddress.Parse(ip);
-            IPEndPoint remoteEP = new IPEndPoint(ipAddress, 11000);
-            Console.WriteLine(remoteEP.ToString());
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, 13000);
+
             _sender = new TcpClient(remoteEP);
             Console.WriteLine("Mam serwer");
             _reader = new StreamReader(_sender.GetStream());
