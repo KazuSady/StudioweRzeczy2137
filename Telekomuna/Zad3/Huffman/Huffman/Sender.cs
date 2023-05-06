@@ -14,14 +14,16 @@ namespace Huffman
         private TcpClient _sender;
         private StreamWriter _writer;
         private StreamReader _reader;
+        private Int32 _port = 13000;
 
         public void StartConnection(string ip)
         {
             IPAddress ipAddress = IPAddress.Parse(ip);
-            IPEndPoint remoteEP = new IPEndPoint(ipAddress, 13000);
+            IPEndPoint remoteEP = new IPEndPoint(ipAddress, _port);
 
-            _sender = new TcpClient(remoteEP);
-            Console.WriteLine("Mam serwer");
+            _sender = new TcpClient();
+            _sender.Connect(remoteEP);
+            Console.WriteLine("Mam odbiornik");
             _reader = new StreamReader(_sender.GetStream());
             _writer = new StreamWriter(_sender.GetStream());
         }

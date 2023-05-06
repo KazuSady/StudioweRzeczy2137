@@ -15,17 +15,16 @@ namespace Huffman
         private StreamWriter _writer;
         private TcpClient _clientSocket;
         private TcpListener _serverSocket;
+        private Int32 _port = 13000;
 
         public void StartListening(string ip)
         {
-            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(ip), 13000);
-
-            Console.WriteLine(localEndPoint.ToString());
+            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(ip), _port);
             _serverSocket = new TcpListener(localEndPoint);
             _serverSocket.Start();
 
             _clientSocket = _serverSocket.AcceptTcpClient();
-            Console.WriteLine("Mam klienta");
+            Console.WriteLine("Mam nadajnik");
             _reader = new StreamReader(_clientSocket.GetStream());
             _writer = new StreamWriter(_clientSocket.GetStream());
             while (true)
