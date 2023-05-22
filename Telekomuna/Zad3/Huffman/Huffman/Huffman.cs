@@ -62,7 +62,7 @@ namespace Huffman
             {
                 KeyValuePair<char, int> kvp = frequency.First();
                 BinaryTree root = new BinaryTree(kvp.Key, kvp.Value);
-                Encode(root, "");
+                Encode(root, "0");
             }
             else
             {
