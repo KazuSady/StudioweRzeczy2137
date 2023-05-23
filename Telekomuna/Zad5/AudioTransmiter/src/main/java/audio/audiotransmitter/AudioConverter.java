@@ -2,16 +2,14 @@ package audio.audiotransmitter;
 
 import javax.sound.sampled.*;
 import java.io.*;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 public class AudioConverter {
     private int SAMPLE_RATE = 44100;
     private int BITS_PER_SAMPLE = 16;
     private int CHANNELS = 1;
-
-
     private volatile boolean isRecording = false;
-    private String receiverIP = "192.168.1.63";
 
 
     public void setSAMPLE_RATE(int SAMPLE_RATE) {
@@ -99,5 +97,35 @@ public class AudioConverter {
         socket.close();
 
         System.out.println("Plik wysłany do: " + destinationIp);
+
+    }
+
+    public void listenForFileOverTcp() throws IOException {
+        ServerSocket serverSocket = new ServerSocket(8080);
+
+        System.out.println("Oczekiwanie na połączenie...");
+
+        Socket clientSocket = serverSocket.accept();
+
+        System.out.println("Połączono z klientem: " + clientSocket.getInetAddress().getHostAddress());
+
+        final byte[] buffer = new byte[4096];
+        final InputStream inputStream = clientSocket.getInputStream();
+        final FileOutputStream fileOutputStream = new FileOutputStream("received.wav");
+        final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+
+        int bytesRead;
+        while ((bytesRead = inputStream.read(buffer)) != -1) {
+            bufferedOutputStream.write(buffer, 0, bytesRead);
+        }
+
+        bufferedOutputStream.flush();
+
+        System.out.println("Plik odebrany i zapisany jako received.wav");
+
+        bufferedOutputStream.close();
+        inputStream.close();
+        clientSocket.close();
+        serverSocket.close();
     }
 }
