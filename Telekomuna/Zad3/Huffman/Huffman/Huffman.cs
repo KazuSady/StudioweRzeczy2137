@@ -58,35 +58,44 @@ namespace Huffman
                     frequency[c] = 1;
                 }
             }
-            BinaryTreeComparer tmp = new BinaryTreeComparer(); 
-            var trees = new List<BinaryTree>();
-            foreach (KeyValuePair<char, int> kvp in frequency)
+            if (frequency.Count() == 1)
             {
-                BinaryTree n = new BinaryTree(kvp.Key, kvp.Value);
-                trees.Add(n);
+                KeyValuePair<char, int> kvp = frequency.First();
+                BinaryTree root = new BinaryTree(kvp.Key, kvp.Value);
+                Encode(root, "0");
             }
-            trees.Sort(tmp);
-            BinaryTree root = null;
-            while(trees.Count > 1)
+            else
             {
-                BinaryTree child1 = trees.First();
-                trees.Remove(child1);
-                BinaryTree child2 = trees.First();
-                trees.Remove(child2);
-                BinaryTree parent = new BinaryTree(child1.GetValue() + child2.GetValue());
-                if(child1.GetValue() == child2.GetValue() && child1.isSum)
+                BinaryTreeComparer tmp = new BinaryTreeComparer();
+                var trees = new List<BinaryTree>();
+                foreach (KeyValuePair<char, int> kvp in frequency)
                 {
-                    BinaryTree helper = child1;
-                    child1 = child2;
-                    child2 = helper;
+                    BinaryTree n = new BinaryTree(kvp.Key, kvp.Value);
+                    trees.Add(n);
                 }
-                root = parent;
-                parent.leftLeaf = child1;
-                parent.rightLeaf = child2;
-                trees.Add(root);
                 trees.Sort(tmp);
-            }
-            Encode(root, "");
+                BinaryTree root = null;
+                while (trees.Count > 1)
+                {
+                    BinaryTree child1 = trees.First();
+                    trees.Remove(child1);
+                    BinaryTree child2 = trees.First();
+                    trees.Remove(child2);
+                    BinaryTree parent = new BinaryTree(child1.GetValue() + child2.GetValue());
+                    if (child1.GetValue() == child2.GetValue() && child1.isSum)
+                    {
+                        BinaryTree helper = child1;
+                        child1 = child2;
+                        child2 = helper;
+                    }
+                    root = parent;
+                    parent.leftLeaf = child1;
+                    parent.rightLeaf = child2;
+                    trees.Add(root);
+                    trees.Sort(tmp);
+                }
+                Encode(root, "");
+            }  
         }
 
         public Huffman(string encoded, string path)
