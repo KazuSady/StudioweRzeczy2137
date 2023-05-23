@@ -9,6 +9,8 @@ def f2(x):
     return pow(2,x)
 def f3(x):
     return np.cos(2*x)
+def f4(x):
+    return np.sin(x)
 #------------------------------------------------------
 # Simpson part 1
 def Simpson1(a, b, funkcja):
@@ -132,6 +134,9 @@ match choice:
     case '3':
         przyb_cal = newton_cotes(f3, eps)
         gausherm = hermite(wezly, f3)
+    case '4':
+        przyb_cal = newton_cotes(f4, eps)
+        gausherm = hermite(wezly, f4)
 print(przyb_cal, gausherm)
  
 #------------------------------------------------------   

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.Pane?>
+
+<Pane maxHeight="600.0" maxWidth="600.0" minHeight="600.0" minWidth="600.0" prefHeight="600.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/19" xmlns:fx="http://javafx.com/fxml/1" fx:controller="audio.audiotransmitter.HelloController">
+   <children>
+      <Button layoutX="25.0" layoutY="25.0" mnemonicParsing="false" onAction="#onRecordAudioClick" prefHeight="25.0" prefWidth="120.0" text="Start Recording" />
+      <Button layoutX="25.0" layoutY="55.0" mnemonicParsing="false" onAction="#onStopRecordClick" prefHeight="25.0" prefWidth="120.0" text="Stop Recording" />
+
+      <TextField fx:id="receiverIP" layoutX="150.0" layoutY="25.0" prefHeight="25.0" prefWidth="120.0" />
+      <Button layoutX="150.0" layoutY="55.0" mnemonicParsing="false" onAction="#onSendAudioClick" prefHeight="25.0" prefWidth="120.0" text="Send Audio" />
+
+      <TextField fx:id="sampleRate" layoutX="25.0" layoutY="90.0" prefHeight="25.0" prefWidth="120.0" />
+      <TextField fx:id="bitsRate" layoutX="25.0" layoutY="120.0" prefHeight="25.0" prefWidth="120.0" />
+      <TextField fx:id="channels" layoutX="25.0" layoutY="150.0" prefHeight="25.0" prefWidth="120.0" />
+
+      <TextField fx:id="SNR" layoutX="150.0" layoutY="180.0" prefHeight="25.0" prefWidth="120.0" />
+      <Button layoutX="25.0" layoutY="180.0" mnemonicParsing="false" onAction="#onCalculateSNRClick" prefHeight="25.0" prefWidth="120.0" text="Calculate SNR" />
+
+
+   </children>
+</Pane>

@@ -39,7 +39,7 @@ public class RSA {
         _n = _p.multiply(_q);
         _k = generateCoprimeNumber(_n);
         _Euler = (_p.subtract(BigInteger.ONE)).multiply(_q.subtract(BigInteger.ONE));
-       // _e = new BigInteger("65537");
+        _e = new BigInteger("65537");
         _d = Euklides.EuclideanAlgorithmExtended(_e, _Euler);
     }
 

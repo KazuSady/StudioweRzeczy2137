@@ -56,14 +56,15 @@ public class AppController {
         BigInteger fileBigInteger = new BigInteger(1, hash);
         BigInteger e = new BigInteger(_ePrivate.getText());
         BigInteger n = new BigInteger(_nPrivate.getText());
+
         BigInteger cypher = rsa.CreateCipher(fileBigInteger,e,n);
         signature.setText(cypher.toString());
 
         //OR
-//        BigInteger t = rsa.CreateT(fileBigInteger, e, n);
-//        BigInteger d = new BigInteger(_dPublic.getText());
-//        BigInteger sign = rsa.CreateCipher(t,d,n);
-//        signature.setText(sign.toString());
+        //BigInteger t = rsa.CreateT(fileBigInteger, e, n);
+        //BigInteger d = new BigInteger(_dPublic.getText());
+        //BigInteger sign = rsa.CreateCipher(t,d,n);
+        //signature.setText(sign.toString());
     }
     @FXML
     public void loadFile(){
@@ -83,8 +84,10 @@ public class AppController {
         BigInteger fileBigInteger = new BigInteger(1, hash);
         BigInteger d = new BigInteger(_dPublic.getText());
         BigInteger n = new BigInteger(_nPublic.getText());
+
         BigInteger cypher = new BigInteger(signature.getText());
         BigInteger decrypted = rsa.Decrypt(cypher,d,n);
+
         if (fileBigInteger.equals(decrypted)){
             isSignCorrect.setText("Podpis poprawny");
         }
@@ -93,8 +96,8 @@ public class AppController {
         }
 
         //OR
-//        BigInteger k = rsa.get_k();
-//        isSignCorrect.setText((rsa.CheckSignature(fileBigInteger, cypher, k, n)));
+        //BigInteger k = rsa.get_k();
+        //isSignCorrect.setText((rsa.CheckSignature(fileBigInteger, cypher, k, n)));
 
     }
 

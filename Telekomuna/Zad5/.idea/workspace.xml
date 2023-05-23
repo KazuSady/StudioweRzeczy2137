@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="0db880f4-33bf-4dd0-a8d4-cab14b1da82b" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../../Krypto/RSA/BlindSignatureRSA/src/main/java/rsasignature/AppController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../Krypto/RSA/BlindSignatureRSA/src/main/java/rsasignature/AppController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Krypto/RSA/BlindSignatureRSA/src/main/java/rsasignature/RSA.java" beforeDir="false" afterPath="$PROJECT_DIR$/../../Krypto/RSA/BlindSignatureRSA/src/main/java/rsasignature/RSA.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../../Numerki/Zad4/LN_SW_zad4_numerki.py" beforeDir="false" afterPath="$PROJECT_DIR$/../../Numerki/Zad4/LN_SW_zad4_numerki.py" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="generalSettings">
+      <MavenGeneralSettings>
+        <option name="mavenHome" value="Use Maven wrapper" />
+        <option name="useMavenConfig" value="true" />
+      </MavenGeneralSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="2QCPif16tg8UjiMA7QljlaENEec" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true"
+  }
+}]]></component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="0db880f4-33bf-4dd0-a8d4-cab14b1da82b" name="Changes" comment="" />
+      <created>1684854722563</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1684854722563</updated>
+    </task>
+    <servers />
+  </component>
+</project>
