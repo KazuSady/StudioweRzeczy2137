@@ -2,8 +2,6 @@ package audio.audiotransmitter;
 
 import javafx.fxml.FXML;
 import javafx.scene.control.TextField;
-
-import java.io.File;
 import java.io.IOException;
 
 public class HelloController {
