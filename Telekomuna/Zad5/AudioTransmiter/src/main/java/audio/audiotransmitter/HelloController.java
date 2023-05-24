@@ -1,9 +1,9 @@
 package audio.audiotransmitter;
 
 import javafx.fxml.FXML;
-import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 
+import java.io.File;
 import java.io.IOException;
 
 public class HelloController {
@@ -22,6 +22,8 @@ public class HelloController {
     private TextField SNR;
     @FXML
     private TextField receiverIP;
+    @FXML
+    private TextField fileStatus;
 
     public void initialize(){
         sampleRate.setPromptText("Sample Rate");
@@ -29,6 +31,7 @@ public class HelloController {
         channels.setPromptText("Channels");
         SNR.setPromptText("SNR Value");
         receiverIP.setPromptText("Receiver IP");
+        fileStatus.setPromptText("File status...");
     }
 
     @FXML
@@ -52,6 +55,13 @@ public class HelloController {
     public void onSendAudioClick() throws IOException {
         String _receiverIP = receiverIP.getText();
         audioConverter.sendFileOverTcp(_receiverIP);
+        fileStatus.setText("File send");
+    }
+
+    @FXML
+    public void onReceiveAudioClick() throws IOException {
+        audioConverter.listenForFileOverTcp();
+        fileStatus.setText("File received");
     }
 
     @FXML
@@ -59,5 +69,7 @@ public class HelloController {
         double snr = 20 * Math.log10( Math.pow(2, _bitsRate));
         SNR.setText(String.valueOf(snr));
     }
+
+
 
 }
