@@ -76,7 +76,7 @@ def Wartosci(x, funk):
     return wynik
 #------------------------------------------------------ 
 # Obliczenie wartości węzłów dla interpolacji wielomianowej
-def cnodes(nodes, stopien, Ynodes, a, b, wybor, c):
+def cnodes(stopien, a, b, wybor):
     for i in range(stopien + 1):
         c.append((1/2.0) * ((b - a) * np.cos(((2*i + 1) * np.pi) / (2 * stopien + 2)) + (b + a)))
         Ynodes.append(Wartosci(c[i], wybor))
@@ -123,12 +123,50 @@ tryb = input()
 match tryb:
     case '1':
         print("Wprowadź oczekiwany błąd aproksymacji:")
-        error = float(input())
+        eps = float(input())
+        n = 1
+        while True:
+            Y.clear()
+            X.clear()
+            c.clear()
+            Ynodes.clear()
+            Xvalues.clear()
+            coefficients.clear()
+            Yvalues.clear()
+            n += 1
+            Punkty(a, b, choice)
+            cnodes( n, a, b, choice)
+            for i in range(n+1):
+                Xvalues.append((2*c[i]-(b+a))/(b-a))
+                Yvalues.append(Wartosci(Xvalues[i], choice))
+            Coefficients(n)
+            bsum = 0.0
+            ile = 0
+            epsilon = 0.0
+        
+            for i in np.arange(a, b+0.2, 0.2):
+                for j in range(n+1):
+                    sum += coefficients[j] * Polynomials((2.0*(i-a))/(b-a)-1, j)
+                bsum += abs(Wartosci(i, choice) - sum)
+                ile += 1
+                sum = 0.0
+            epsilon = bsum / ile
+            bsum = 0.0
+            if epsilon <= eps:
+                break
+        sum = 0.0
+        for i in np.arange(a, b+0.01, 0.01):
+            Xczebyszew.append(i)
+            for j in range(n+1):
+                sum += coefficients[j] * Polynomials((2.0*(i-a))/(b-a)-1, j)
+            Yczebyszew.append(sum)
+            sum = 0.0
+        print("Stopień wielomianu aproksymującego, dla którego osiągnięto zadaną dokładność to:", n)
     case '2':
         print("Podaj stopień wielomianu aproksymującego:")
         n = int(input())
         Punkty(a, b, choice)
-        cnodes(nodes, n, Ynodes, a, b, choice, c)
+        cnodes( n, a, b, choice)
         for i in range(n + 1):
             Xvalues.append((2*c[i]-(b+a))/(b-a))
             Yvalues.append(Wartosci(Xvalues[i], choice))
@@ -146,7 +184,7 @@ match tryb:
             ile += 1
             sum = 0.0
         epsilon = bsum / ile
-        print("Blad aproksymacji wynosi:", epsilon)
+        print("Błąd aproksymacji:", epsilon)
 
 
 plt.plot(X, Y, label='Funkcja')
