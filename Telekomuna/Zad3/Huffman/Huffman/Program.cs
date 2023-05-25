@@ -7,8 +7,10 @@ if (choice.Equals("O") || choice.Equals("o"))
     Console.WriteLine("Podaj swoj adres ip");
     string ip = Console.ReadLine();
     Receiver receiver = new Receiver();
-    receiver.StartListening(ip);
-    //receiver.StopListening();
+    receiver.StartListeningDir(ip);
+    receiver.StopListening();
+    receiver.StartListeningEncode(ip);
+    receiver.StopListening();
 }
 else if (choice.Equals("N") || choice.Equals("n"))
 {
@@ -19,8 +21,11 @@ else if (choice.Equals("N") || choice.Equals("n"))
     Console.WriteLine("Wprowadz tekst do przeslania");
     string mes = Console.ReadLine();
     
-    sender.Send(mes);
-
+    sender.SendDic(mes);
     sender.StopConnection();
-    
+
+    sender.StartConnection(ip);
+    sender.SendEnc(mes);
+    sender.StopConnection();
+
 }

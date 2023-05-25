@@ -17,7 +17,7 @@ namespace Huffman
         private TcpListener _serverSocket;
         private Int32 _port = 13000;
 
-        public void StartListening(string ip)
+        public void StartListeningDir(string ip)
         {
             IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(ip), _port);
             _serverSocket = new TcpListener(localEndPoint);
@@ -36,6 +36,27 @@ namespace Huffman
                 dictWrite.Close();
                 Huffman huf = new Huffman(mes, "dictionary.txt");
                 Console.WriteLine("Decoded: " + huf.message);
+                //_writer.WriteLine("ACK");
+                break;
+            }
+        }
+
+        public void StartListeningEncode(string ip)
+        {
+            IPEndPoint localEndPoint = new IPEndPoint(IPAddress.Parse(ip), _port);
+            _serverSocket = new TcpListener(localEndPoint);
+            _serverSocket.Start();
+
+            _clientSocket = _serverSocket.AcceptTcpClient();
+            _reader = new StreamReader(_clientSocket.GetStream());
+            //_writer = new StreamWriter(_clientSocket.GetStream());
+            while (true)
+            {
+                string mes = _reader.ReadLine();
+                string dic = _reader.ReadToEnd();
+                StreamWriter dictWrite = new StreamWriter("encoded.txt");
+                dictWrite.Write(dic);
+                dictWrite.Close();
                 //_writer.WriteLine("ACK");
                 break;
             }
