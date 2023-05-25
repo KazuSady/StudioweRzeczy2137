@@ -35,7 +35,7 @@ namespace Huffman
             _sender.Close();
         }
 
-        public void SendDic(string mes)
+        public void Send(string mes)
         {
             Huffman huf = new Huffman(mes);
             StreamWriter dictWrite = new StreamWriter("dictionary.txt");
@@ -46,13 +46,6 @@ namespace Huffman
             //string response = _reader.ReadToEnd();
         }
 
-        public void SendEnc(string mes)
-        {
-            Huffman huf = new Huffman(mes);
-            StreamWriter encodeWrite = new StreamWriter("encoded.txt");
-            encodeWrite.Write(huf.GetEncode());
-            encodeWrite.Close();
-        }
             
             
         
