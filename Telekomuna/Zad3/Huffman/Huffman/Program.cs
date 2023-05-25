@@ -1,5 +1,5 @@
 ﻿using Huffman;
-
+Console.WriteLine("Autorzy: Laura Nowogórska i Szymon Wydmuch");
 Console.WriteLine("Nadajnik czy odbiornik?");
 string choice = Console.ReadLine();
 if (choice.Equals("O") || choice.Equals("o"))
