@@ -39,6 +39,9 @@ namespace Huffman
                 dictWrite.Close();
                 Huffman huf = new Huffman(mes, "dictionary.txt");
                 Console.WriteLine("Decoded: " + huf.message);
+                StreamWriter decodedWrite = new StreamWriter("decoded.txt");
+                decodedWrite.Write(huf.message);
+                decodedWrite.Close();
                 //_writer.WriteLine("ACK");
                 break;
             }
