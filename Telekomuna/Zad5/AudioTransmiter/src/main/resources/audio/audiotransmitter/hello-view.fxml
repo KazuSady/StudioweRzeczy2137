@@ -24,8 +24,7 @@
       <TextField fx:id="fileStatus" layoutX="150.0" layoutY="120.0" prefHeight="25.0" prefWidth="120.0" />
 
       <Label layoutX="25.0" layoutY="211.0" prefHeight="17.0" prefWidth="245.0" text="Authors: Wydmuch, Nowogórska" />
-
-      <Button layoutX="150.0" layoutY="150.0" mnemonicParsing="false" onAction="#onLoadFileClick" prefHeight="25.0" prefWidth="120.0" text="Load File" />
+      <Button layoutX="150.0" layoutY="150.0" mnemonicParsing="false" onAction="#onPlayClick" prefHeight="25.0" prefWidth="120.0" text="Play " />
 
 
 
