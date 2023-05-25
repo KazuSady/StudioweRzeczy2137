@@ -43,9 +43,8 @@ namespace Huffman
             dictWrite.Close();
             _writer.WriteLine(huf.GetEncode());
             _writer.WriteLine(huf.GetDictionaryString());
-            //string response = _reader.ReadToEnd();
-            Console.WriteLine("odpowiedx");
-            return "dupa";
+            string response = _reader.ReadToEnd();
+            return response;
         }
             
             
