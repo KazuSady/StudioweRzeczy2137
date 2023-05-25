@@ -10,6 +10,7 @@ public class AudioConverter {
     private int BITS_PER_SAMPLE = 16;
     private int CHANNELS = 1;
     private volatile boolean isRecording = false;
+    private File file;
 
 
     public void setSAMPLE_RATE(int SAMPLE_RATE) {
@@ -25,9 +26,9 @@ public class AudioConverter {
 
     public void startRecording() {
         try {
-            final AudioFormat audioFormat = new AudioFormat(SAMPLE_RATE, BITS_PER_SAMPLE, CHANNELS, true, false);
-            final DataLine.Info dataLineInfo = new DataLine.Info(TargetDataLine.class, audioFormat);
-            final TargetDataLine targetDataLine = (TargetDataLine) AudioSystem.getLine(dataLineInfo);
+            AudioFormat audioFormat = new AudioFormat(SAMPLE_RATE, BITS_PER_SAMPLE, CHANNELS, true, false);
+            DataLine.Info dataLineInfo = new DataLine.Info(TargetDataLine.class, audioFormat);
+            TargetDataLine targetDataLine = (TargetDataLine) AudioSystem.getLine(dataLineInfo);
             targetDataLine.open(audioFormat);
             targetDataLine.start();
 
@@ -55,7 +56,6 @@ public class AudioConverter {
                     saveToWav(byteArrayOutputStream.toByteArray(), "recorded.wav");
 
                     // Wysyłanie pliku WAV przez TCP
-                    //sendFileOverTcp("recorded.wav", receiverIP);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -72,22 +72,23 @@ public class AudioConverter {
     }
 
     private void saveToWav(byte[] audioData, String fileName) throws IOException {
-        final AudioFormat audioFormat = new AudioFormat(SAMPLE_RATE, BITS_PER_SAMPLE, CHANNELS, true, false);
-        final AudioInputStream audioInputStream = new AudioInputStream(new ByteArrayInputStream(audioData), audioFormat, audioData.length / audioFormat.getFrameSize());
-        AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, new File(fileName));
+        file = new File("recorded.wav");
+        AudioFormat audioFormat = new AudioFormat(SAMPLE_RATE, BITS_PER_SAMPLE, CHANNELS, true, false);
+        AudioInputStream audioInputStream = new AudioInputStream(new ByteArrayInputStream(audioData), audioFormat, audioData.length / audioFormat.getFrameSize());
+        AudioSystem.write(audioInputStream, AudioFileFormat.Type.WAVE, file);
         audioInputStream.close();
     }
 
     public void sendFileOverTcp(String destinationIp) throws IOException {
-        final File file = new File("recorded.wav");
-        final byte[] fileData = new byte[(int) file.length()];
-        final FileInputStream fileInputStream = new FileInputStream(file);
-        final BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+        file = new File("recorded.wav");
+        byte[] fileData = new byte[(int) file.length()];
+        FileInputStream fileInputStream = new FileInputStream(file);
+        BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
 
         bufferedInputStream.read(fileData, 0, fileData.length);
 
-        final Socket socket = new Socket(destinationIp, 8080);
-        final OutputStream outputStream = socket.getOutputStream();
+        Socket socket = new Socket(destinationIp, 8080);
+        OutputStream outputStream = socket.getOutputStream();
 
         outputStream.write(fileData, 0, fileData.length);
         outputStream.flush();
@@ -109,10 +110,10 @@ public class AudioConverter {
 
         System.out.println("Połączono z klientem: " + clientSocket.getInetAddress().getHostAddress());
 
-        final byte[] buffer = new byte[4096];
-        final InputStream inputStream = clientSocket.getInputStream();
-        final FileOutputStream fileOutputStream = new FileOutputStream("received.wav");
-        final BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+        byte[] buffer = new byte[4096];
+        InputStream inputStream = clientSocket.getInputStream();
+        FileOutputStream fileOutputStream = new FileOutputStream("received.wav");
+        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
 
         int bytesRead;
         while ((bytesRead = inputStream.read(buffer)) != -1) {
@@ -122,10 +123,28 @@ public class AudioConverter {
         bufferedOutputStream.flush();
 
         System.out.println("Plik odebrany i zapisany jako received.wav");
-
         bufferedOutputStream.close();
         inputStream.close();
         clientSocket.close();
         serverSocket.close();
     }
+
+    public void loadFile(File file) {
+        this.file = file;
+
+    }
+
+    public synchronized void play() {
+        new Thread(() -> {
+            try {
+                Clip clip = AudioSystem.getClip();
+                AudioInputStream inputStream = AudioSystem.getAudioInputStream(AudioConverter.class.getResourceAsStream(file.getAbsolutePath()));
+                clip.open(inputStream);
+                clip.start();
+            } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
+                throw new RuntimeException(e);
+            }
+        }).start();
+    }
+
 }

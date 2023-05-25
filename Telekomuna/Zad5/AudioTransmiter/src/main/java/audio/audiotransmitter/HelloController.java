@@ -1,7 +1,12 @@
 package audio.audiotransmitter;
 
 import javafx.fxml.FXML;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.TextField;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
+import java.io.File;
 import java.io.IOException;
 
 public class HelloController {
@@ -68,6 +73,12 @@ public class HelloController {
         SNR.setText(String.valueOf(snr));
     }
 
-
+    @FXML
+    public void onLoadFileClick(){
+        FileChooser fileChooser = new FileChooser();
+        File file = fileChooser.showOpenDialog(new Stage());
+        audioConverter.loadFile(file);
+        fileStatus.setText("File loaded");
+    }
 
 }
