@@ -19,8 +19,8 @@ else if (choice.Equals("N") || choice.Equals("n"))
     Console.WriteLine("Wprowadz tekst do przeslania");
     string mes = Console.ReadLine();
     
-    string response = sender.Send(mes);
-    Console.WriteLine(response);
+    sender.Send(mes);
+
     sender.StopConnection();
     
 }
