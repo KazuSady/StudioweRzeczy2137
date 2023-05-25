@@ -112,39 +112,62 @@ public class AudioConverter {
 
         byte[] buffer = new byte[4096];
         InputStream inputStream = clientSocket.getInputStream();
-        FileOutputStream fileOutputStream = new FileOutputStream("received.wav");
-        BufferedOutputStream bufferedOutputStream = new BufferedOutputStream(fileOutputStream);
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
 
         int bytesRead;
         while ((bytesRead = inputStream.read(buffer)) != -1) {
-            bufferedOutputStream.write(buffer, 0, bytesRead);
+            byteArrayOutputStream.write(buffer, 0, bytesRead);
         }
 
-        bufferedOutputStream.flush();
+        byteArrayOutputStream.flush();
 
-        System.out.println("Plik odebrany i zapisany jako received.wav");
-        bufferedOutputStream.close();
+        System.out.println("Plik odebrany.");
+
+        byteArrayOutputStream.close();
         inputStream.close();
         clientSocket.close();
         serverSocket.close();
+
+        // Tworzenie pliku na podstawie danych otrzymanych z sieci
+        byte[] fileData = byteArrayOutputStream.toByteArray();
+        file = new File("received.wav");
+        FileOutputStream fileOutputStream = new FileOutputStream(file);
+        fileOutputStream.write(fileData);
+        fileOutputStream.close();
+
+        System.out.println("Plik zapisany jako received.wav");
+
+
     }
 
-    public void loadFile(File file) {
-        this.file = file;
+    public void playWavFile() {
+        try {
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(file);
 
-    }
+            AudioFormat audioFormat = audioInputStream.getFormat();
+            DataLine.Info dataLineInfo = new DataLine.Info(SourceDataLine.class, audioFormat);
+            SourceDataLine sourceDataLine = (SourceDataLine) AudioSystem.getLine(dataLineInfo);
 
-    public synchronized void play() {
-        new Thread(() -> {
-            try {
-                Clip clip = AudioSystem.getClip();
-                AudioInputStream inputStream = AudioSystem.getAudioInputStream(AudioConverter.class.getResourceAsStream(file.getAbsolutePath()));
-                clip.open(inputStream);
-                clip.start();
-            } catch (LineUnavailableException | UnsupportedAudioFileException | IOException e) {
-                throw new RuntimeException(e);
+            sourceDataLine.open(audioFormat);
+            sourceDataLine.start();
+
+            byte[] buffer = new byte[4096];
+            int bytesRead;
+
+            System.out.println("Odtwarzanie pliku...");
+
+            while ((bytesRead = audioInputStream.read(buffer)) != -1) {
+                sourceDataLine.write(buffer, 0, bytesRead);
             }
-        }).start();
+
+            System.out.println("Odtwarzanie zakończone.");
+
+            sourceDataLine.drain();
+            sourceDataLine.close();
+            audioInputStream.close();
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
     }
 
 }

@@ -74,11 +74,8 @@ public class HelloController {
     }
 
     @FXML
-    public void onLoadFileClick(){
-        FileChooser fileChooser = new FileChooser();
-        File file = fileChooser.showOpenDialog(new Stage());
-        audioConverter.loadFile(file);
-        fileStatus.setText("File loaded");
+    public void onPlayClick(){
+        audioConverter.playWavFile();
     }
 
 }
